@@ -1,124 +1,25 @@
 
 <!DOCTYPE html>
 <html lang="es">
-<!-- forzar redeploy -->
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Asistente Técnico Husky</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f4f8;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-        header {
-            background-color: #005b96;
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            font-size: 1.5rem;
-        }
-        #chat {
-            flex: 1;
-            padding: 1rem;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        .message {
-            max-width: 70%;
-            padding: 0.8rem;
-            border-radius: 0.8rem;
-            line-height: 1.4;
-        }
-        .user {
-            align-self: flex-end;
-            background-color: #d0e6ff;
-        }
-        .bot {
-            align-self: flex-start;
-            background-color: #ffffff;
-            border: 1px solid #ccc;
-        }
-        form {
-            display: flex;
-            padding: 1rem;
-            background-color: #e8f0fe;
-        }
-        input[type="text"] {
-            flex: 1;
-            padding: 0.8rem;
-            font-size: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 0.5rem;
-        }
-        button {
-            padding: 0.8rem 1.2rem;
-            margin-left: 0.5rem;
-            background-color: #005b96;
-            color: white;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #003f6b;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Asistente Husky</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+    iframe {
+      border: none;
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
 </head>
 <body>
-    <header>Asistente Técnico de Husky Software</header>
-    <main id="chat">
-        <div class="message bot">Hola, soy el asistente de Husky Software 😊 ¿En qué puedo ayudarte hoy?</div>
-    </main>
-    <form id="chat-form">
-        <input type="text" id="user-input" placeholder="Escribí tu consulta..." required />
-        <button type="submit">Enviar</button>
-    </form>
-
-    <script>
-        const form = document.getElementById('chat-form');
-        const input = document.getElementById('user-input');
-        const chat = document.getElementById('chat');
-        const API_URL = "https://backend-asistente-husky-1.onrender.com/api";
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const userText = input.value.trim();
-            if (!userText) return;
-
-            addMessage(userText, 'user');
-            input.value = '';
-
-            try {
-                const res = await fetch(API_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ message: userText })
-                });
-
-                if (!res.ok) throw new Error("Respuesta no válida del servidor");
-
-                const data = await res.json();
-                addMessage(data.reply, 'bot');
-            } catch (err) {
-                addMessage("⚠️ Error al conectar con el servidor. Por favor, intentá más tarde.", 'bot');
-            }
-        });
-
-        function addMessage(text, sender) {
-            const msg = document.createElement('div');
-            msg.className = `message ${sender}`;
-            msg.textContent = text;
-            chat.appendChild(msg);
-            chat.scrollTop = chat.scrollHeight;
-        }
-    </script>
+  <iframe src="https://asistente.husky.software"></iframe>
 </body>
 </html>
