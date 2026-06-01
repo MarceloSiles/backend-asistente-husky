@@ -23,7 +23,17 @@
     return msg;
   }
 
+  function formatFileSize(bytes) {
+    if (!bytes && bytes !== 0) return '';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
   function init() {
+    var selectedImage = null;
+    var selectedImagePreviewUrl = null;
+
     var button = el('button', { id: 'husky-chat-button', type: 'button' }, '💬 Asistente Husky');
     var win = el('section', { id: 'husky-chat-window', 'aria-label': 'Asistente Husky Software' });
 
@@ -39,9 +49,17 @@
     addMessage(messages, 'Hola, soy el asistente de Husky Software. ¿En qué te puedo ayudar?', 'bot');
 
     var form = el('form', { class: 'husky-form' });
+    var attach = el('button', { id: 'husky-attach', type: 'button', title: 'Adjuntar imagen' }, '📎');
+    var fileInput = el('input', { id: 'husky-file-input', type: 'file', accept: 'image/png,image/jpeg,image/webp,image/gif', style: 'display:none' });
+    var inputWrap = el('div', { class: 'husky-input-wrap' });
     var input = el('input', { id: 'husky-input', type: 'text', placeholder: 'Escribí tu consulta...', autocomplete: 'off' });
+    var attachmentInfo = el('div', { id: 'husky-attachment-info' });
+    inputWrap.appendChild(input);
+    inputWrap.appendChild(attachmentInfo);
     var send = el('button', { id: 'husky-send', type: 'submit' }, 'Enviar');
-    form.appendChild(input);
+    form.appendChild(attach);
+    form.appendChild(fileInput);
+    form.appendChild(inputWrap);
     form.appendChild(send);
 
     win.appendChild(header);
@@ -59,15 +77,78 @@
       win.classList.remove('open');
     });
 
+    attach.addEventListener('click', function () {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', function () {
+      var file = fileInput.files && fileInput.files[0];
+      if (!file) return;
+
+      if (!file.type || !file.type.startsWith('image/')) {
+        selectedImage = null;
+        attachmentInfo.textContent = 'El archivo seleccionado no es una imagen.';
+        fileInput.value = '';
+        return;
+      }
+
+      if (file.size > 8 * 1024 * 1024) {
+        selectedImage = null;
+        attachmentInfo.textContent = 'La imagen es demasiado grande. Máximo recomendado: 8 MB.';
+        fileInput.value = '';
+        return;
+      }
+
+      selectedImage = file;
+      if (selectedImagePreviewUrl) URL.revokeObjectURL(selectedImagePreviewUrl);
+      selectedImagePreviewUrl = URL.createObjectURL(file);
+      attachmentInfo.innerHTML = '';
+      var chip = el('div', { class: 'husky-attachment-chip' });
+      chip.appendChild(el('span', {}, '📷 ' + file.name + ' · ' + formatFileSize(file.size)));
+      var remove = el('button', { type: 'button', class: 'husky-remove-attachment', title: 'Quitar imagen' }, '×');
+      remove.addEventListener('click', function () {
+        selectedImage = null;
+        fileInput.value = '';
+        attachmentInfo.innerHTML = '';
+        if (selectedImagePreviewUrl) URL.revokeObjectURL(selectedImagePreviewUrl);
+        selectedImagePreviewUrl = null;
+      });
+      chip.appendChild(remove);
+      attachmentInfo.appendChild(chip);
+    });
+
     form.addEventListener('submit', function (event) {
       event.preventDefault();
       var text = input.value.trim();
-      if (!text) return;
+      if (!text && !selectedImage) return;
 
-      addMessage(messages, text, 'user');
+      var displayText = text || 'Imagen adjunta';
+      addMessage(messages, displayText, 'user');
+
+      if (selectedImage && selectedImagePreviewUrl) {
+        var preview = el('img', { class: 'husky-image-preview', src: selectedImagePreviewUrl, alt: 'Imagen adjunta' });
+        var previewWrap = el('div', { class: 'husky-preview-wrap' });
+        previewWrap.appendChild(preview);
+        messages.appendChild(previewWrap);
+        messages.scrollTop = messages.scrollHeight;
+      }
+
       input.value = '';
       send.disabled = true;
-      var thinking = addMessage(messages, 'Estoy revisando la consulta...', 'bot');
+
+      var thinkingText = selectedImage
+        ? 'Recibí la imagen adjunta. En este paso ya puedo mostrarla, pero todavía falta conectar el análisis automático de imágenes en el backend.'
+        : 'Estoy revisando la consulta...';
+      var thinking = addMessage(messages, thinkingText, 'bot');
+
+      if (selectedImage) {
+        selectedImage = null;
+        fileInput.value = '';
+        attachmentInfo.innerHTML = '';
+        send.disabled = false;
+        input.focus();
+        return;
+      }
 
       fetch(backendUrl + '/chat', {
         method: 'POST',
