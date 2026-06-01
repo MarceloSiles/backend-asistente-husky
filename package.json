@@ -1,12 +1,18 @@
 {
-  "name": "asistente-husky-backend",
+  "name": "backend-asistente-husky",
   "version": "1.0.0",
-  "description": "Backend para el asistente técnico inteligente de Husky Software",
+  "description": "Backend inteligente para el asistente técnico de Husky Software",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.18.3"
   }
 }
