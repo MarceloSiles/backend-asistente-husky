@@ -62,29 +62,7 @@ async function askOpenAI(question, faqContext) {
   return data.choices?.[0]?.message?.content?.trim() || null;
 }
 
-app.get('/', (req, res) => {
-  res.json({
-    name: 'Backend Asistente Husky',
-    status: 'online',
-    endpoints: ['/health', '/chat', '/stats']
-  });
-});
-
-app.get('/health', (req, res) => {
-  res.json({ ok: true, service: 'backend-asistente-husky', time: new Date().toISOString() });
-});
-
-app.get('/api/health', (req, res) => {
-  res.json({ ok: true, service: 'backend-asistente-husky', time: new Date().toISOString() });
-});
-
-app.post('/chat', async (req, res) => {
-  const question = String(req.body?.message || req.body?.question || '').trim();
-
-  if (!question) {
-    return res.status(400).json({ error: 'Falta el mensaje del usuario.' });
-  }
-
+async function buildAnswer(question, req) {
   const faqAnswer = findFaqAnswer(question);
   let answer = faqAnswer;
   let source = faqAnswer ? 'faq' : 'default';
@@ -104,7 +82,48 @@ app.post('/chat', async (req, res) => {
   }
 
   saveLog({ question, answer, source, ip: req.ip });
-  res.json({ answer, source });
+  return { answer, source };
+}
+
+app.get('/', (req, res) => {
+  res.json({
+    name: 'Backend Asistente Husky',
+    status: 'online',
+    endpoints: ['/health', '/api/health', '/chat', '/chat-test?message=No%20puedo%20pedir%20CAE', '/stats']
+  });
+});
+
+app.get('/health', (req, res) => {
+  res.json({ ok: true, service: 'backend-asistente-husky', time: new Date().toISOString() });
+});
+
+app.get('/api/health', (req, res) => {
+  res.json({ ok: true, service: 'backend-asistente-husky', time: new Date().toISOString() });
+});
+
+app.post('/chat', async (req, res) => {
+  const question = String(req.body?.message || req.body?.question || '').trim();
+
+  if (!question) {
+    return res.status(400).json({ error: 'Falta el mensaje del usuario.' });
+  }
+
+  const result = await buildAnswer(question, req);
+  res.json(result);
+});
+
+app.get('/chat-test', async (req, res) => {
+  const question = String(req.query?.message || '').trim();
+
+  if (!question) {
+    return res.status(400).json({
+      error: 'Falta el parámetro message.',
+      example: '/chat-test?message=No%20puedo%20pedir%20CAE'
+    });
+  }
+
+  const result = await buildAnswer(question, req);
+  res.json({ question, ...result });
 });
 
 app.get('/stats', (req, res) => {
