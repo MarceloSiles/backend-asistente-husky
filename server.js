@@ -91,8 +91,12 @@ app.get('/api', (req, res) => {
   res.json({
     name: 'Backend Asistente Husky',
     status: 'online',
-    endpoints: ['/health', '/api/health', '/chat', '/chat-test?message=No%20puedo%20pedir%20CAE', '/stats', '/demo', '/embed.js']
+    endpoints: ['/health', '/api/health', '/chat', '/chat-test?message=No%20puedo%20pedir%20CAE', '/stats', '/demo', '/demo.html', '/embed.js']
   });
+});
+
+app.get('/demo', (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'demo.html'));
 });
 
 app.get('/health', (req, res) => {
