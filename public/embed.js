@@ -122,11 +122,13 @@
       var text = input.value.trim();
       if (!text && !selectedImage) return;
 
+      var imageToSend = selectedImage;
+      var previewUrlToShow = selectedImagePreviewUrl;
       var displayText = text || 'Imagen adjunta';
       addMessage(messages, displayText, 'user');
 
-      if (selectedImage && selectedImagePreviewUrl) {
-        var preview = el('img', { class: 'husky-image-preview', src: selectedImagePreviewUrl, alt: 'Imagen adjunta' });
+      if (imageToSend && previewUrlToShow) {
+        var preview = el('img', { class: 'husky-image-preview', src: previewUrlToShow, alt: 'Imagen adjunta' });
         var previewWrap = el('div', { class: 'husky-preview-wrap' });
         previewWrap.appendChild(preview);
         messages.appendChild(previewWrap);
@@ -136,17 +138,39 @@
       input.value = '';
       send.disabled = true;
 
-      var thinkingText = selectedImage
-        ? 'Recibí la imagen adjunta. En este paso ya puedo mostrarla, pero todavía falta conectar el análisis automático de imágenes en el backend.'
+      var thinkingText = imageToSend
+        ? 'Estoy recibiendo la imagen...'
         : 'Estoy revisando la consulta...';
       var thinking = addMessage(messages, thinkingText, 'bot');
 
-      if (selectedImage) {
-        selectedImage = null;
-        fileInput.value = '';
-        attachmentInfo.innerHTML = '';
-        send.disabled = false;
-        input.focus();
+      selectedImage = null;
+      selectedImagePreviewUrl = null;
+      fileInput.value = '';
+      attachmentInfo.innerHTML = '';
+
+      if (imageToSend) {
+        var formData = new FormData();
+        formData.append('image', imageToSend);
+        formData.append('message', text);
+
+        fetch(backendUrl + '/chat-image', {
+          method: 'POST',
+          body: formData
+        })
+          .then(function (response) {
+            if (!response.ok) throw new Error('Error HTTP ' + response.status);
+            return response.json();
+          })
+          .then(function (data) {
+            thinking.textContent = data.answer || 'Imagen recibida correctamente.';
+          })
+          .catch(function () {
+            thinking.textContent = 'No pude enviar la imagen al backend. Probá con una imagen JPG, PNG o WEBP de menos de 8 MB.';
+          })
+          .finally(function () {
+            send.disabled = false;
+            input.focus();
+          });
         return;
       }
 
