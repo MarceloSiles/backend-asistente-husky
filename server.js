@@ -46,15 +46,19 @@ function saveLog(entry) {
   });
 }
 
+function getSystemPrompt() {
+  return `Sos el asistente técnico de Husky Software. Respondé en español argentino, con tono claro, amable y práctico. Ayudás a usuarios finales de Husky Gestión Comercial. No inventes funciones. Cuando el caso requiera soporte técnico de Husky o un técnico en PC, indicalo claramente. No menciones archivos CDX porque el sistema no los usa. El módulo de contabilidad está discontinuado y no debe presentarse como vigente. Si analizás una captura, explicá lo que se ve con prudencia y pedí más datos si la imagen no es legible.`;
+}
+
+function getKnowledgeBaseText() {
+  return faq.map((item, index) => `Caso ${index + 1}: palabras clave: ${item.keywords.join(', ')}\nRespuesta: ${item.answer}`).join('\n\n');
+}
+
 async function askOpenAI(question, faqContext) {
   const apiKey = process.env.OPENAI_API_KEY;
   const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
 
   if (!apiKey) return null;
-
-  const systemPrompt = `Sos el asistente técnico de Husky Software. Respondé en español argentino, con tono claro, amable y práctico. Ayudás a usuarios finales de Husky Gestión Comercial. No inventes funciones. Cuando el caso requiera soporte técnico o técnico en PC, indicalo claramente. No menciones archivos CDX porque el sistema no los usa. El módulo de contabilidad está discontinuado y no debe presentarse como vigente.`;
-
-  const knowledge = faq.map((item, index) => `Caso ${index + 1}: palabras clave: ${item.keywords.join(', ')}\nRespuesta: ${item.answer}`).join('\n\n');
 
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -65,8 +69,8 @@ async function askOpenAI(question, faqContext) {
     body: JSON.stringify({
       model,
       messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'system', content: `Base de conocimiento inicial de Husky:\n\n${knowledge}` },
+        { role: 'system', content: getSystemPrompt() },
+        { role: 'system', content: `Base de conocimiento inicial de Husky:\n\n${getKnowledgeBaseText()}` },
         { role: 'user', content: question }
       ],
       temperature: 0.3
@@ -76,6 +80,49 @@ async function askOpenAI(question, faqContext) {
   if (!response.ok) {
     const text = await response.text();
     throw new Error(`OpenAI respondió ${response.status}: ${text}`);
+  }
+
+  const data = await response.json();
+  return data.choices?.[0]?.message?.content?.trim() || null;
+}
+
+async function askOpenAIVision(question, image) {
+  const apiKey = process.env.OPENAI_API_KEY;
+  const model = process.env.OPENAI_VISION_MODEL || process.env.OPENAI_MODEL || 'gpt-4o-mini';
+
+  if (!apiKey) return null;
+
+  const base64Image = fs.readFileSync(image.path, 'base64');
+  const dataUrl = `data:${image.mimetype};base64,${base64Image}`;
+  const userText = question || 'Analizá esta captura o imagen relacionada con Husky Gestión Comercial. Identificá mensajes de error visibles y explicá qué debería hacer el usuario.';
+
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model,
+      messages: [
+        { role: 'system', content: getSystemPrompt() },
+        { role: 'system', content: `Base de conocimiento inicial de Husky:\n\n${getKnowledgeBaseText()}` },
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: userText },
+            { type: 'image_url', image_url: { url: dataUrl } }
+          ]
+        }
+      ],
+      temperature: 0.2,
+      max_tokens: 700
+    })
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`OpenAI visión respondió ${response.status}: ${text}`);
   }
 
   const data = await response.json();
@@ -144,12 +191,24 @@ app.post('/chat-image', upload.single('image'), async (req, res) => {
     return res.status(400).json({ error: 'Falta la imagen.' });
   }
 
-  const answer = `Recibí la imagen correctamente: ${image.originalname}. En el próximo paso vamos a conectar el análisis automático para que pueda leer la captura y responder según el error que aparezca. Si querés, mientras tanto escribí también el mensaje de error que se ve en la imagen.`;
+  let answer = null;
+  let source = 'image-upload';
+
+  try {
+    answer = await askOpenAIVision(question, image);
+    if (answer) source = 'openai-vision';
+  } catch (error) {
+    console.error(error.message);
+  }
+
+  if (!answer) {
+    answer = `Recibí la imagen correctamente: ${image.originalname}. Para que pueda analizar automáticamente la captura, falta configurar la variable OPENAI_API_KEY en Render o revisar que el modelo de visión esté disponible. Mientras tanto, escribime el mensaje de error que se ve en la imagen y te ayudo con la base de conocimiento.`;
+  }
 
   saveLog({
     question: question || '(consulta con imagen sin texto)',
     answer,
-    source: 'image-upload',
+    source,
     image: {
       originalname: image.originalname,
       mimetype: image.mimetype,
@@ -161,7 +220,7 @@ app.post('/chat-image', upload.single('image'), async (req, res) => {
 
   res.json({
     answer,
-    source: 'image-upload',
+    source,
     image: {
       originalname: image.originalname,
       mimetype: image.mimetype,
