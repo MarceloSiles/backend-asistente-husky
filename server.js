@@ -46,6 +46,11 @@ function saveLog(entry) {
   });
 }
 
+function hasOpenAIKey() {
+  const value = process.env.OPENAI_API_KEY;
+  return Boolean(value && value.trim().length > 10);
+}
+
 function getSystemPrompt() {
   return `Sos el asistente técnico de Husky Software. Respondé en español argentino, con tono claro, amable y práctico. Ayudás a usuarios finales de Husky Gestión Comercial. No inventes funciones. Cuando el caso requiera soporte técnico de Husky o un técnico en PC, indicalo claramente. No menciones archivos CDX porque el sistema no los usa. El módulo de contabilidad está discontinuado y no debe presentarse como vigente. Si analizás una captura, explicá lo que se ve con prudencia y pedí más datos si la imagen no es legible.`;
 }
@@ -156,8 +161,42 @@ app.get('/api', (req, res) => {
   res.json({
     name: 'Backend Asistente Husky',
     status: 'online',
-    endpoints: ['/health', '/api/health', '/chat', '/chat-image', '/chat-test?message=No%20puedo%20pedir%20CAE', '/stats', '/demo', '/demo.html', '/embed.js']
+    endpoints: ['/health', '/api/health', '/chat', '/chat-image', '/debug-config', '/openai-test', '/chat-test?message=No%20puedo%20pedir%20CAE', '/stats', '/demo', '/demo.html', '/embed.js']
   });
+});
+
+app.get('/debug-config', (req, res) => {
+  const key = process.env.OPENAI_API_KEY || '';
+  res.json({
+    service: 'backend-asistente-husky',
+    openaiApiKeyConfigured: hasOpenAIKey(),
+    openaiApiKeyLength: key ? key.length : 0,
+    openaiModel: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+    openaiVisionModel: process.env.OPENAI_VISION_MODEL || process.env.OPENAI_MODEL || 'gpt-4o-mini',
+    nodeEnv: process.env.NODE_ENV || null,
+    time: new Date().toISOString()
+  });
+});
+
+app.get('/openai-test', async (req, res) => {
+  if (!hasOpenAIKey()) {
+    return res.status(500).json({
+      ok: false,
+      step: 'env',
+      message: 'El backend no está leyendo OPENAI_API_KEY. Revisar Environment en Render y hacer Deploy latest commit.'
+    });
+  }
+
+  try {
+    const answer = await askOpenAI('Respondé solamente: OK', null);
+    res.json({ ok: true, source: 'openai', answer });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      step: 'openai-call',
+      message: error.message.slice(0, 500)
+    });
+  }
 });
 
 app.get('/demo', (req, res) => {
@@ -193,22 +232,29 @@ app.post('/chat-image', upload.single('image'), async (req, res) => {
 
   let answer = null;
   let source = 'image-upload';
+  let debugError = null;
 
   try {
     answer = await askOpenAIVision(question, image);
     if (answer) source = 'openai-vision';
   } catch (error) {
+    debugError = error.message;
     console.error(error.message);
   }
 
   if (!answer) {
-    answer = `Recibí la imagen correctamente: ${image.originalname}. Para que pueda analizar automáticamente la captura, falta configurar la variable OPENAI_API_KEY en Render o revisar que el modelo de visión esté disponible. Mientras tanto, escribime el mensaje de error que se ve en la imagen y te ayudo con la base de conocimiento.`;
+    if (!hasOpenAIKey()) {
+      answer = `Recibí la imagen correctamente: ${image.originalname}. El backend todavía no está leyendo la variable OPENAI_API_KEY en Render. Revisá que esté cargada en el servicio backend-asistente-husky y luego hacé Manual Deploy → Deploy latest commit.`;
+    } else {
+      answer = `Recibí la imagen correctamente: ${image.originalname}, pero OpenAI no pudo analizarla. Revisá /openai-test para ver el error técnico. Puede ser modelo no disponible, clave inválida, falta de crédito o permisos de la API.`;
+    }
   }
 
   saveLog({
     question: question || '(consulta con imagen sin texto)',
     answer,
     source,
+    debugError,
     image: {
       originalname: image.originalname,
       mimetype: image.mimetype,
