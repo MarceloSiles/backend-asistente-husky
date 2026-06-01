@@ -4,17 +4,35 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
 const { findFaqAnswer, faq } = require('./faq');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
 const DATA_DIR = path.join(__dirname, 'data');
 const LOG_FILE = path.join(DATA_DIR, 'consultas.jsonl');
+const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
+
+if (!fs.existsSync(UPLOAD_DIR)) {
+  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
+
+const upload = multer({
+  dest: UPLOAD_DIR,
+  limits: { fileSize: 8 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowed.includes(file.mimetype)) {
+      return cb(new Error('Solo se permiten imágenes JPG, PNG, WEBP o GIF.'));
+    }
+    cb(null, true);
+  }
+});
 
 const allowedOrigin = process.env.ALLOWED_ORIGIN || '*';
 app.use(cors({ origin: allowedOrigin === '*' ? true : allowedOrigin }));
@@ -91,7 +109,7 @@ app.get('/api', (req, res) => {
   res.json({
     name: 'Backend Asistente Husky',
     status: 'online',
-    endpoints: ['/health', '/api/health', '/chat', '/chat-test?message=No%20puedo%20pedir%20CAE', '/stats', '/demo', '/demo.html', '/embed.js']
+    endpoints: ['/health', '/api/health', '/chat', '/chat-image', '/chat-test?message=No%20puedo%20pedir%20CAE', '/stats', '/demo', '/demo.html', '/embed.js']
   });
 });
 
@@ -116,6 +134,40 @@ app.post('/chat', async (req, res) => {
 
   const result = await buildAnswer(question, req);
   res.json(result);
+});
+
+app.post('/chat-image', upload.single('image'), async (req, res) => {
+  const question = String(req.body?.message || req.body?.question || '').trim();
+  const image = req.file;
+
+  if (!image) {
+    return res.status(400).json({ error: 'Falta la imagen.' });
+  }
+
+  const answer = `Recibí la imagen correctamente: ${image.originalname}. En el próximo paso vamos a conectar el análisis automático para que pueda leer la captura y responder según el error que aparezca. Si querés, mientras tanto escribí también el mensaje de error que se ve en la imagen.`;
+
+  saveLog({
+    question: question || '(consulta con imagen sin texto)',
+    answer,
+    source: 'image-upload',
+    image: {
+      originalname: image.originalname,
+      mimetype: image.mimetype,
+      size: image.size,
+      filename: image.filename
+    },
+    ip: req.ip
+  });
+
+  res.json({
+    answer,
+    source: 'image-upload',
+    image: {
+      originalname: image.originalname,
+      mimetype: image.mimetype,
+      size: image.size
+    }
+  });
 });
 
 app.get('/chat-test', async (req, res) => {
@@ -143,6 +195,11 @@ app.get('/stats', (req, res) => {
   }).filter(Boolean).reverse();
 
   res.json({ total: lines.length, recent });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.message);
+  res.status(400).json({ error: err.message || 'Error al procesar la solicitud.' });
 });
 
 app.listen(PORT, () => {
