@@ -10,6 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 10000;
 const DATA_DIR = path.join(__dirname, 'data');
 const LOG_FILE = path.join(DATA_DIR, 'consultas.jsonl');
+const PUBLIC_DIR = path.join(__dirname, 'public');
 
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -18,6 +19,7 @@ if (!fs.existsSync(DATA_DIR)) {
 const allowedOrigin = process.env.ALLOWED_ORIGIN || '*';
 app.use(cors({ origin: allowedOrigin === '*' ? true : allowedOrigin }));
 app.use(express.json({ limit: '1mb' }));
+app.use(express.static(PUBLIC_DIR));
 
 function saveLog(entry) {
   const line = JSON.stringify({ timestamp: new Date().toISOString(), ...entry }) + '\n';
@@ -85,11 +87,11 @@ async function buildAnswer(question, req) {
   return { answer, source };
 }
 
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
   res.json({
     name: 'Backend Asistente Husky',
     status: 'online',
-    endpoints: ['/health', '/api/health', '/chat', '/chat-test?message=No%20puedo%20pedir%20CAE', '/stats']
+    endpoints: ['/health', '/api/health', '/chat', '/chat-test?message=No%20puedo%20pedir%20CAE', '/stats', '/demo', '/embed.js']
   });
 });
 
