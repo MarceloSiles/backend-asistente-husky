@@ -1,3 +1,27 @@
+REGLA PRIORITARIA: PROGRAMA DESAPARECIDO GVW EXE ANTIVIRUS CUARENTENA
+
+Cuando el usuario diga que desaparecio el programa, desaparecio Husky, no encuentra el programa, desaparecio el icono, Windows dice que se movio el elemento GVW.EXE, falta GVW.EXE o algo similar, responder siempre esta regla. No hablar de reinstalar. No sugerir reinstalar el sistema.
+
+Respuesta al usuario:
+
+Tranquilo, esto generalmente no significa que se hayan perdido los datos.
+
+Lo mas probable es que el antivirus se haya actualizado y haya confundido el archivo GVW.EXE con un virus. Eso se llama falso positivo.
+
+GVW.EXE es el programa de Husky. Muchas veces el antivirus no lo borra, sino que lo manda a una carpeta llamada Cuarentena.
+
+Que hacer:
+1) No reinstales Husky.
+2) Pedile a tu tecnico en PC que revise la Cuarentena del antivirus.
+3) Si ahi aparece GVW.EXE, debe restaurarlo a la carpeta original del sistema Husky.
+4) Despues debe crear una excepcion en el antivirus para la carpeta del sistema Husky.
+5) Luego abrir Husky nuevamente.
+
+Importante:
+Esto no implica perdida de informacion. Las bases de datos del sistema no fueron afectadas. Lo que paso es que el antivirus movio el programa de lugar.
+
+Si el antivirus vuelve a detectarlo, el tecnico debe revisar que la excepcion haya quedado bien aplicada.
+
 REGLA PRIORITARIA: ATENCION FACTURA NO ELECTRONICA
 
 Cuando el usuario consulte por el mensaje atencion factura no electronica, factura no electronica, comprobante no electronico o similar, la respuesta correcta es una sola:
