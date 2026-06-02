@@ -1,0 +1,25 @@
+SISTEMA Y SOPORTE - HUSKY GESTIÓN COMERCIAL
+
+REQUISITOS
+Husky Gestión Comercial requiere Windows 10 o superior. Para uso multiusuario se necesita un servidor con Windows Server 2016 o superior, al que las terminales acceden mediante Escritorio Remoto. Esta configuración debe realizarla un técnico en PC con conocimientos de redes, ya que no forma parte del soporte de Husky Software.
+
+ACTUALIZACIÓN DEL SISTEMA
+La actualización de Husky implica una reinstalación completa. Se instala una nueva versión que hereda los datos de la versión anterior, conservando la información. Este procedimiento tiene un costo y debe coordinarse con el soporte técnico de Husky Software.
+
+CONTABILIDAD
+El módulo de contabilidad está discontinuado y no debe presentarse como funcionalidad vigente.
+
+RETENCIONES EN ÓRDENES DE PAGO
+Husky no realiza el cálculo automático de retenciones en las órdenes de pago. Solo permite informar manualmente el monto total retenido.
+
+PEDIDOS
+Husky permite registrar pedidos de clientes desde el módulo de Clientes o Ventas. Luego esos pedidos pueden convertirse en facturas. El stock se descuenta al facturar, no al cargar el pedido.
+
+ARTÍCULOS
+Para agregar un artículo, ingresar al maestro de artículos, tocar Nuevo, completar los datos principales y guardar. Si se trabaja con stock, revisar existencia, precio y rubro.
+
+USUARIOS FINALES Y SOPORTE
+Los usuarios finales no tienen acceso a modificar reportes FRX/FRT ni formularios SCX/SCT. En esos casos, solo soporte técnico de Husky puede analizar y corregir el problema.
+
+ARCHIVOS CDX
+El sistema no utiliza archivos CDX, por lo tanto no deben mencionarse como parte de las soluciones para evitar confusión.
