@@ -67,7 +67,7 @@ Reglas de prioridad:
 4) Cuando el caso requiera soporte técnico de Husky o un técnico en PC, indicalo claramente.
 5) No menciones archivos CDX porque el sistema no los usa.
 6) El módulo de contabilidad está discontinuado y no debe presentarse como vigente.
-7) Si analizás una captura, explicá lo que se ve con prudencia y pedí más datos si la imagen no es legible.`;
+7) Si analizás una captura, primero identificá el texto visible o el tipo de error. Si el texto corresponde a un caso con regla prioritaria, respondé con esa regla y no improvises.`;
 }
 
 function getFaqText() {
@@ -127,7 +127,7 @@ async function askOpenAIVision(question, image) {
   const model = process.env.OPENAI_VISION_MODEL || process.env.OPENAI_MODEL || 'gpt-4o-mini';
   if (!apiKey) return null;
 
-  const userText = question || 'Analizá esta captura o imagen relacionada con Husky Gestión Comercial. Identificá mensajes de error visibles y explicá qué debería hacer el usuario.';
+  const userText = question || 'Analizá esta captura relacionada con Husky Gestión Comercial. Primero identificá el mensaje visible. Si reconocés un error ya documentado, nombralo exactamente, por ejemplo: duplicidad en la numeración, factura no electrónica, archivo de memoria, REINDEXA, no es una tabla, certificado expirado, PDF o Gmail.';
   const knowledge = buildKnowledgeSystemMessage(userText);
   const base64Image = fs.readFileSync(image.path, 'base64');
   const dataUrl = `data:${image.mimetype};base64,${base64Image}`;
@@ -294,6 +294,12 @@ app.post('/chat-image', upload.single('image'), async (req, res) => {
       answer = ai.answer;
       source = ai.knowledgeResults?.length ? 'openai-vision-knowledge' : 'openai-vision';
       knowledgeResults = ai.knowledgeResults || [];
+
+      const detectedRule = findRuleAnswer(`${question}\n${answer}`);
+      if (detectedRule) {
+        answer = detectedRule.answer;
+        source = `${detectedRule.family}-image-detected`;
+      }
     }
   } catch (error) {
     debugError = error.message;
