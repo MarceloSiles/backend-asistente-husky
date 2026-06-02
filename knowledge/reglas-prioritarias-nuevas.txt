@@ -11,43 +11,49 @@ Ese aviso normalmente aparece porque se uso un punto de venta manual en lugar de
 
 REGLA PRIORITARIA: REINDEXA LINEAS 90 91 92 93 CLIENTES
 
-Cuando el usuario consulte por REINDEXA linea 90, REINDEXA linea 91, REINDEXA linea 92, REINDEXA linea 93 o VER_STRU_FE linea 136, la respuesta debe ser siempre esta. No mezclar con otros archivos ni indicar extraer CLIENTES.BAK o CLIENTES.TBK desde DATOS.ZIP.
+Cuando el usuario consulte por REINDEXA linea 90, REINDEXA linea 91, REINDEXA linea 92, REINDEXA linea 93 o VER_STRU_FE linea 136, la respuesta debe ser siempre esta. Usar lenguaje muy simple y paso a paso. No mezclar con otros archivos ni indicar extraer CLIENTES.BAK o CLIENTES.TBK desde DATOS.ZIP.
 
 Respuesta al usuario:
 
 Ese error corresponde al archivo de clientes. Los archivos relacionados son CLIENTES.DBF y CLIENTES.FPT.
 
-La primera recomendacion es no seguir usando el sistema, porque si se sigue trabajando se puede empeorar el problema.
+Primero: no sigas usando Husky hasta resolverlo. Si se sigue trabajando, el problema puede empeorar.
 
 Procedimiento recomendado:
-1) Cerrar Husky en todas las PCs.
-2) Ir a la carpeta donde esta instalado el sistema.
-3) Buscar los archivos CLIENTES.BAK y CLIENTES.TBK.
-4) Enviar esos dos archivos al soporte de Husky Software para intentar la reparacion.
+1) Cerra Husky en todas las PCs.
+2) Entra a la carpeta donde esta instalado el sistema.
+3) Busca estos dos archivos: CLIENTES.BAK y CLIENTES.TBK.
+4) Envialos al soporte de Husky Software para intentar repararlos.
 
 Procedimiento de apuro o urgencia:
-Usar esto solo si necesitan salir del paso y no pueden esperar soporte.
+Usa esto solo si necesitan salir del paso y no pueden esperar soporte.
 
-1) Cerrar Husky en todas las PCs.
-2) Ir a la carpeta del sistema.
-3) Copiar CLIENTES.DBF y CLIENTES.FPT a otra carpeta, como resguardo.
-4) Renombrar CLIENTES.BAK como CLIENTES.DBF.
-5) Renombrar CLIENTES.TBK como CLIENTES.FPT.
-6) Abrir Husky y verificar si permite trabajar.
+1) Cerra Husky en todas las PCs.
+2) Entra a la carpeta del sistema.
+3) Copia CLIENTES.DBF y CLIENTES.FPT a otra carpeta, como resguardo.
+4) Borra de la carpeta del sistema los archivos CLIENTES.DBF y CLIENTES.FPT.
+5) Renombra CLIENTES.BAK como CLIENTES.DBF.
+6) Renombra CLIENTES.TBK como CLIENTES.FPT.
+7) Abri Husky y proba si permite trabajar.
 
 En la gran mayoria de los casos se recupera todo. Muy rara vez puede faltar algun cliente cargado en la ultima sesion previa al error.
 
 Ultima alternativa:
-Si lo anterior no sirve, se puede intentar recuperar CLIENTES.DBF y CLIENTES.FPT desde DATOS.ZIP, pero solo si ese backup esta actualizado con no mas de 1 dia de antiguedad.
+Si lo anterior no sirve, se puede intentar recuperar CLIENTES.DBF y CLIENTES.FPT desde DATOS.ZIP, pero solo si ese backup esta actualizado. Como maximo deberia tener 1 dia de antiguedad.
 
 En ese caso:
-1) Cerrar Husky en todas las PCs.
-2) Abrir DATOS.ZIP.
-3) Extraer unicamente CLIENTES.DBF y CLIENTES.FPT.
-4) Copiarlos en la carpeta del sistema reemplazando los existentes.
+1) Cerra Husky en todas las PCs.
+2) Abri DATOS.ZIP.
+3) Extrae unicamente CLIENTES.DBF y CLIENTES.FPT.
+4) Copialos en la carpeta del sistema reemplazando los existentes.
+
+Si DATOS.ZIP esta dañado:
+Podes usar BACKUP_ANTERIOR.ZIP, pero solamente si tambien esta actualizado. Como maximo deberia tener 1 dia de antiguedad.
 
 Importante:
-No extraer CLIENTES.BAK ni CLIENTES.TBK desde DATOS.ZIP para reemplazar CLIENTES.DBF y CLIENTES.FPT. Si se usa DATOS.ZIP, se extraen unicamente CLIENTES.DBF y CLIENTES.FPT, y solo si el backup esta actualizado.
+No extraigas CLIENTES.BAK ni CLIENTES.TBK desde DATOS.ZIP para reemplazar CLIENTES.DBF y CLIENTES.FPT. Si usas DATOS.ZIP o BACKUP_ANTERIOR.ZIP, extrae unicamente CLIENTES.DBF y CLIENTES.FPT.
+
+Si no estas seguro, es mejor consultar al soporte de Husky antes de tocar archivos.
 
 REGLA PRIORITARIA: DUPLICIDAD EN LA NUMERACION
 
