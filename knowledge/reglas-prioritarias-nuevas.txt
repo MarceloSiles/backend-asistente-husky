@@ -1,0 +1,45 @@
+REGLA PRIORITARIA: ATENCION FACTURA NO ELECTRONICA
+
+Cuando el usuario consulte por el mensaje atencion factura no electronica, factura no electronica, comprobante no electronico o similar, la respuesta correcta es una sola:
+
+El aviso aparece porque el comprobante se hizo con un punto de venta manual, no electronico.
+
+No corresponde orientar por cliente, certificado PFX ni condicion fiscal del cliente.
+
+Respuesta al usuario:
+Ese aviso normalmente aparece porque se uso un punto de venta manual en lugar de un punto de venta electronico. Hay que revisar el punto de venta usado. Si la factura debia ser electronica, debe emitirse con un punto de venta electronico configurado como RECE. Si ya se genero el comprobante y no correspondia, conviene que lo revise soporte de Husky antes de tocar cuenta corriente, stock o numeracion.
+
+REGLA PRIORITARIA: IMPORTACION DE ARTICULOS DESDE EXCEL
+
+Cuando el usuario consulte por importar articulos desde Excel, formato del Excel, columnas del XLS o plantilla de articulos, el asistente debe responder con el formato fijo del manual. No debe inventar otro formato.
+
+Condiciones:
+- Hoja 1.
+- Sin titulos ni encabezados.
+- Primera fila con datos en fila 1.
+- Sin filas intercaladas con aclaraciones.
+- Sin formulas.
+- Las columnas opcionales deben existir aunque esten vacias.
+- De las columnas A, B y C, al menos una debe tener datos.
+- No se pueden importar mas de 16384 filas.
+
+Formato:
+A: Codigo de articulo interno - Texto
+B: Codigo de articulo del proveedor - Texto
+C: Codigo de barras - Texto
+D: Descripcion del articulo - Texto
+E: Precio unitario de costo o compra - Numero
+F: Familia o rubro - Texto
+G: Subfamilia - Texto
+H: Moneda, 1 Pesos y 2 Dolares - Texto
+I: Tasa o porcentaje de IVA - Numero
+J: Nombre del proveedor - Texto
+K: Precio de venta 1 - Numero
+L: Precio de venta 2 - Numero
+M: Precio de venta 3 - Numero
+N: Precio de venta 4 - Numero
+O: Unidad de medida de compra - Texto
+P: Unidad de medida de venta - Texto
+Q: Coeficiente que relaciona ambas unidades - Numero
+
+Si compra en cajas de 12 y vende por unidad, Q debe ser 12. Si compra y vende en la misma unidad, Q debe ser 1.
