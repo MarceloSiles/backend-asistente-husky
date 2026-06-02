@@ -1,0 +1,21 @@
+PERCEPCIONES, RETENCIONES E IMPUESTOS INTERNOS
+
+El sistema no permite calcular ni determinar percepciones ni retenciones de ningún tipo, incluyendo IIBB, IVA, Ganancias u otras.
+
+Compras:
+
+Si se carga una factura de compra que contiene percepciones, el sistema permite ingresar esos datos con fines contables / IVA Compras.
+
+Órdenes de pago a proveedores:
+
+El sistema no calcula retenciones automáticamente. Si es necesario informar retenciones, se deben calcular manualmente e informarlas en la orden de pago seleccionando Retenciones.
+
+Ventas:
+
+El sistema no calcula percepciones en facturas de venta.
+
+Si un cliente paga aplicando una retención, el valor de esa retención debe informarse en el ingreso del recibo usando la opción Retenciones.
+
+Impuestos internos:
+
+El sistema no está preparado para procesar impuestos internos en las facturas de venta.
