@@ -9,6 +9,46 @@ No corresponde orientar por cliente, certificado PFX ni condicion fiscal del cli
 Respuesta al usuario:
 Ese aviso normalmente aparece porque se uso un punto de venta manual en lugar de un punto de venta electronico. Hay que revisar el punto de venta usado. Si la factura debia ser electronica, debe emitirse con un punto de venta electronico configurado como RECE. Si ya se genero el comprobante y no correspondia, conviene que lo revise soporte de Husky antes de tocar cuenta corriente, stock o numeracion.
 
+REGLA PRIORITARIA: REINDEXA LINEAS 90 91 92 93 CLIENTES
+
+Cuando el usuario consulte por REINDEXA linea 90, REINDEXA linea 91, REINDEXA linea 92, REINDEXA linea 93 o VER_STRU_FE linea 136, la respuesta debe ser siempre esta. No mezclar con otros archivos ni indicar extraer CLIENTES.BAK o CLIENTES.TBK desde DATOS.ZIP.
+
+Respuesta al usuario:
+
+Ese error corresponde al archivo de clientes. Los archivos relacionados son CLIENTES.DBF y CLIENTES.FPT.
+
+La primera recomendacion es no seguir usando el sistema, porque si se sigue trabajando se puede empeorar el problema.
+
+Procedimiento recomendado:
+1) Cerrar Husky en todas las PCs.
+2) Ir a la carpeta donde esta instalado el sistema.
+3) Buscar los archivos CLIENTES.BAK y CLIENTES.TBK.
+4) Enviar esos dos archivos al soporte de Husky Software para intentar la reparacion.
+
+Procedimiento de apuro o urgencia:
+Usar esto solo si necesitan salir del paso y no pueden esperar soporte.
+
+1) Cerrar Husky en todas las PCs.
+2) Ir a la carpeta del sistema.
+3) Copiar CLIENTES.DBF y CLIENTES.FPT a otra carpeta, como resguardo.
+4) Renombrar CLIENTES.BAK como CLIENTES.DBF.
+5) Renombrar CLIENTES.TBK como CLIENTES.FPT.
+6) Abrir Husky y verificar si permite trabajar.
+
+En la gran mayoria de los casos se recupera todo. Muy rara vez puede faltar algun cliente cargado en la ultima sesion previa al error.
+
+Ultima alternativa:
+Si lo anterior no sirve, se puede intentar recuperar CLIENTES.DBF y CLIENTES.FPT desde DATOS.ZIP, pero solo si ese backup esta actualizado con no mas de 1 dia de antiguedad.
+
+En ese caso:
+1) Cerrar Husky en todas las PCs.
+2) Abrir DATOS.ZIP.
+3) Extraer unicamente CLIENTES.DBF y CLIENTES.FPT.
+4) Copiarlos en la carpeta del sistema reemplazando los existentes.
+
+Importante:
+No extraer CLIENTES.BAK ni CLIENTES.TBK desde DATOS.ZIP para reemplazar CLIENTES.DBF y CLIENTES.FPT. Si se usa DATOS.ZIP, se extraen unicamente CLIENTES.DBF y CLIENTES.FPT, y solo si el backup esta actualizado.
+
 REGLA PRIORITARIA: DUPLICIDAD EN LA NUMERACION
 
 Cuando el usuario consulte por duplicidad en la numeracion, duplicidad de numeracion, numeracion duplicada, AFIP informa proximo numero, error de numeracion o similar, la respuesta debe ser siempre esta. No mezclar con certificado, cliente, PFX ni problemas generales de CAE.
