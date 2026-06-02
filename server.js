@@ -7,6 +7,7 @@ const path = require('path');
 const multer = require('multer');
 const { findFaqAnswer, faq } = require('./faq');
 const { loadKnowledgeChunks, searchKnowledge, formatKnowledgeContext } = require('./knowledge');
+const { findCriticalRuleAnswer } = require('./criticalRules');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -46,7 +47,16 @@ function hasOpenAIKey() {
 }
 
 function getSystemPrompt() {
-  return `Sos el asistente técnico de Husky Software. Respondé en español argentino, con tono claro, amable y práctico. Ayudás a usuarios finales de Husky Gestión Comercial. No inventes funciones. Usá primero la base de conocimiento provista. Cuando el caso requiera soporte técnico de Husky o un técnico en PC, indicalo claramente. No menciones archivos CDX porque el sistema no los usa. El módulo de contabilidad está discontinuado y no debe presentarse como vigente. Si analizás una captura, explicá lo que se ve con prudencia y pedí más datos si la imagen no es legible.`;
+  return `Sos el asistente técnico de Husky Software. Respondé en español argentino, con tono claro, amable y práctico. Ayudás a usuarios finales de Husky Gestión Comercial. No inventes funciones.
+
+Reglas de prioridad:
+1) Si la base de conocimiento contiene una regla, disparador, prioridad absoluta o respuesta obligatoria relacionada con la consulta, obedecela exactamente y no la mezcles con otros casos.
+2) Si hay conflicto entre el manual y preguntas frecuentes/reglas críticas, usá preguntas frecuentes/reglas críticas.
+3) No menciones fuentes internas, TXT, manuales, reglas ni base de conocimiento. Respondé como conocimiento propio del asistente.
+4) Cuando el caso requiera soporte técnico de Husky o un técnico en PC, indicalo claramente.
+5) No menciones archivos CDX porque el sistema no los usa.
+6) El módulo de contabilidad está discontinuado y no debe presentarse como vigente.
+7) Si analizás una captura, explicá lo que se ve con prudencia y pedí más datos si la imagen no es legible.`;
 }
 
 function getFaqText() {
@@ -54,13 +64,13 @@ function getFaqText() {
 }
 
 function buildKnowledgeSystemMessage(question) {
-  const results = searchKnowledge(question, 5);
+  const results = searchKnowledge(question, 8);
   const docsContext = formatKnowledgeContext(results);
   const faqText = getFaqText();
 
   let content = `Base FAQ inicial de Husky:\n\n${faqText}`;
   if (docsContext) {
-    content += `\n\nBase documental encontrada para esta consulta:\n\n${docsContext}`;
+    content += `\n\nBase documental encontrada para esta consulta. Usá principalmente los primeros fragmentos, porque están ordenados por relevancia:\n\n${docsContext}`;
   }
   return { content, results };
 }
@@ -85,7 +95,7 @@ async function askOpenAI(question) {
         { role: 'system', content: knowledge.content },
         { role: 'user', content: question }
       ],
-      temperature: 0.3
+      temperature: 0.1
     })
   });
 
@@ -130,8 +140,8 @@ async function askOpenAIVision(question, image) {
           ]
         }
       ],
-      temperature: 0.2,
-      max_tokens: 700
+      temperature: 0.1,
+      max_tokens: 800
     })
   });
 
@@ -148,10 +158,16 @@ async function askOpenAIVision(question, image) {
 }
 
 async function buildAnswer(question, req) {
+  const critical = findCriticalRuleAnswer(question);
+  if (critical) {
+    saveLog({ question, answer: critical.answer, source: `critical-rule:${critical.id}`, ip: req.ip });
+    return { answer: critical.answer, source: 'critical-rule' };
+  }
+
   const faqAnswer = findFaqAnswer(question);
   let answer = faqAnswer;
   let source = faqAnswer ? 'faq' : 'default';
-  let knowledgeResults = searchKnowledge(question, 5);
+  let knowledgeResults = searchKnowledge(question, 8);
 
   try {
     const ai = await askOpenAI(question);
@@ -165,7 +181,7 @@ async function buildAnswer(question, req) {
   }
 
   if (!answer) {
-    answer = `Hola, soy el asistente de Husky Software. No encontré una respuesta exacta para esa consulta, pero puedo orientarte. Contame qué módulo estabas usando, qué mensaje aparece y en qué momento ocurre. Si se trata de archivos dañados, facturación electrónica, certificados o errores de conexión con AFIP/ARCA, probablemente deba revisarlo soporte técnico de Husky.`;
+    answer = `Hola, soy el asistente de Husky Software. No encontré una respuesta exacta para esa consulta, pero puedo orientarte. Necesito que me detalles un poco más lo que ocurre: mensaje exacto, pantalla o proceso. Si podés, subí una imagen con la pantalla del problema.`;
   }
 
   saveLog({
@@ -195,8 +211,9 @@ app.get('/knowledge-status', (req, res) => {
 app.get('/knowledge-search', (req, res) => {
   const q = String(req.query.q || '').trim();
   if (!q) return res.status(400).json({ error: 'Falta el parámetro q.' });
-  const results = searchKnowledge(q, 5).map((r) => ({ filename: r.filename, index: r.index, score: r.score, preview: r.text.slice(0, 500) }));
-  res.json({ query: q, results });
+  const critical = findCriticalRuleAnswer(q);
+  const results = searchKnowledge(q, 8).map((r) => ({ filename: r.filename, index: r.index, score: r.score, preview: r.text.slice(0, 700) }));
+  res.json({ query: q, criticalRule: critical ? critical.id : null, results });
 });
 
 app.get('/debug-config', (req, res) => {
@@ -242,6 +259,18 @@ app.post('/chat-image', upload.single('image'), async (req, res) => {
   const question = String(req.body?.message || req.body?.question || '').trim();
   const image = req.file;
   if (!image) return res.status(400).json({ error: 'Falta la imagen.' });
+
+  const critical = question ? findCriticalRuleAnswer(question) : null;
+  if (critical) {
+    saveLog({
+      question: question || '(consulta con imagen)',
+      answer: critical.answer,
+      source: `critical-rule-image:${critical.id}`,
+      image: { originalname: image.originalname, mimetype: image.mimetype, size: image.size, filename: image.filename },
+      ip: req.ip
+    });
+    return res.json({ answer: critical.answer, source: 'critical-rule', image: { originalname: image.originalname, mimetype: image.mimetype, size: image.size } });
+  }
 
   let answer = null;
   let source = 'image-upload';
