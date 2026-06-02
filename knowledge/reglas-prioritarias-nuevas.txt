@@ -9,6 +9,40 @@ No corresponde orientar por cliente, certificado PFX ni condicion fiscal del cli
 Respuesta al usuario:
 Ese aviso normalmente aparece porque se uso un punto de venta manual en lugar de un punto de venta electronico. Hay que revisar el punto de venta usado. Si la factura debia ser electronica, debe emitirse con un punto de venta electronico configurado como RECE. Si ya se genero el comprobante y no correspondia, conviene que lo revise soporte de Husky antes de tocar cuenta corriente, stock o numeracion.
 
+REGLA PRIORITARIA: DUPLICIDAD EN LA NUMERACION
+
+Cuando el usuario consulte por duplicidad en la numeracion, duplicidad de numeracion, numeracion duplicada, AFIP informa proximo numero, error de numeracion o similar, la respuesta debe ser siempre esta. No mezclar con certificado, cliente, PFX ni problemas generales de CAE.
+
+Respuesta al usuario:
+
+Ese mensaje indica un problema con la numeracion del punto de venta electronico.
+
+Hay dos casos posibles:
+
+Caso 1: AFIP informa que el proximo numero es 1
+
+En ese caso el problema es del servicio de AFIP/ARCA. No es un problema del sistema Husky.
+
+Que hacer:
+1) No borres comprobantes.
+2) No hagas reproceso.
+3) Espera a que AFIP/ARCA se normalice.
+4) No intentes cada 5 minutos, porque eso puede provocar otros problemas.
+5) Volve a intentar mas tarde.
+
+Caso 2: AFIP informa un proximo numero distinto de 1
+
+En ese caso probablemente en algun momento ese punto de venta estuvo configurado como no electronico y se genero un comprobante invalido que ocupo esa numeracion.
+
+Que hacer:
+1) Hay que localizar ese comprobante invalido.
+2) Antes de borrarlo, verificar si afecto cuenta corriente o stock.
+3) Luego se debe eliminar ese comprobante para liberar el numero.
+4) Despues hay que emitir nuevamente desde el punto de venta electronico correcto.
+
+Importante:
+Este caso no debe tratarse como reproceso. Si no estas seguro, conviene que lo revise soporte de Husky antes de borrar comprobantes, porque puede afectar stock, cuenta corriente o numeracion.
+
 REGLA PRIORITARIA: IMPORTACION DE ARTICULOS DESDE EXCEL
 
 Cuando el usuario consulte por importar articulos desde Excel, formato del Excel, columnas del XLS o plantilla de articulos, el asistente debe responder con el formato fijo del manual. No debe inventar otro formato.
