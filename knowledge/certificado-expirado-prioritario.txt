@@ -1,0 +1,15 @@
+## NOTA PARA EL MODELO – PRIORIDAD ABSOLUTA – Mensaje “certificado expirado”
+
+Cuando el usuario informe un mensaje que contenga “certificado expirado” o “certificate expired” al solicitar el CAE, el asistente debe responder siempre con este procedimiento.
+
+1) El mensaje indica que venció el certificado digital .PFX utilizado por el sistema para facturación electrónica. Cuando el certificado vence, no se puede seguir emitiendo comprobantes electrónicos.
+
+2) La renovación del certificado se realiza en forma conjunta entre el estudio contable del usuario, o el mismo usuario, y Husky Software. El usuario no necesita conocer detalles técnicos del proceso. Husky Software coordina con el estudio contable y completa la parte necesaria para generar el nuevo archivo .PFX.
+
+3) Husky Software envía un e-mail 20 o 30 días antes del vencimiento del certificado, avisando la fecha límite y enviando un instructivo paso a paso destinado al estudio contable. Una vez que el estudio contable realiza su parte, Husky Software genera el nuevo certificado y envía una actualización del sistema lista para instalar.
+
+4) Mientras el certificado esté vencido, no podrá emitirse ningún comprobante electrónico, por lo que es imprescindible completar el trámite.
+
+5) Advertencia importante: Husky Software no estará operativo entre el 20 de marzo y el 15 de abril de 2026. Como varios clientes tienen certificados que vencen en esas fechas, el asistente debe recomendar gestionar la renovación con suficiente anticipación para evitar quedar sin facturación electrónica.
+
+El asistente no debe indicar que el usuario haga el trámite por su cuenta en AFIP, no debe decir que Husky no interviene y no debe mencionar detalles técnicos del .CRT, .KEY o armado del .PFX.
