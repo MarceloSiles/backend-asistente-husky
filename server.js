@@ -8,6 +8,7 @@ const multer = require('multer');
 const { findFaqAnswer, faq } = require('./faq');
 const { loadKnowledgeChunks, searchKnowledge, formatKnowledgeContext } = require('./knowledge');
 const { findCriticalRuleAnswer } = require('./criticalRules');
+const { findAdditionalRuleAnswer } = require('./additionalCriticalRules');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -44,6 +45,16 @@ function saveLog(entry) {
 function hasOpenAIKey() {
   const value = process.env.OPENAI_API_KEY;
   return Boolean(value && value.trim().length > 10);
+}
+
+function findRuleAnswer(question) {
+  const additional = findAdditionalRuleAnswer(question);
+  if (additional) return { ...additional, family: 'additional-critical-rule' };
+
+  const critical = findCriticalRuleAnswer(question);
+  if (critical) return { ...critical, family: 'critical-rule' };
+
+  return null;
 }
 
 function getSystemPrompt() {
@@ -158,10 +169,10 @@ async function askOpenAIVision(question, image) {
 }
 
 async function buildAnswer(question, req) {
-  const critical = findCriticalRuleAnswer(question);
-  if (critical) {
-    saveLog({ question, answer: critical.answer, source: `critical-rule:${critical.id}`, ip: req.ip });
-    return { answer: critical.answer, source: 'critical-rule' };
+  const rule = findRuleAnswer(question);
+  if (rule) {
+    saveLog({ question, answer: rule.answer, source: `${rule.family}:${rule.id}`, ip: req.ip });
+    return { answer: rule.answer, source: rule.family };
   }
 
   const faqAnswer = findFaqAnswer(question);
@@ -211,9 +222,9 @@ app.get('/knowledge-status', (req, res) => {
 app.get('/knowledge-search', (req, res) => {
   const q = String(req.query.q || '').trim();
   if (!q) return res.status(400).json({ error: 'Falta el parámetro q.' });
-  const critical = findCriticalRuleAnswer(q);
+  const rule = findRuleAnswer(q);
   const results = searchKnowledge(q, 8).map((r) => ({ filename: r.filename, index: r.index, score: r.score, preview: r.text.slice(0, 700) }));
-  res.json({ query: q, criticalRule: critical ? critical.id : null, results });
+  res.json({ query: q, criticalRule: rule ? rule.id : null, criticalRuleFamily: rule ? rule.family : null, results });
 });
 
 app.get('/debug-config', (req, res) => {
@@ -260,16 +271,16 @@ app.post('/chat-image', upload.single('image'), async (req, res) => {
   const image = req.file;
   if (!image) return res.status(400).json({ error: 'Falta la imagen.' });
 
-  const critical = question ? findCriticalRuleAnswer(question) : null;
-  if (critical) {
+  const rule = question ? findRuleAnswer(question) : null;
+  if (rule) {
     saveLog({
       question: question || '(consulta con imagen)',
-      answer: critical.answer,
-      source: `critical-rule-image:${critical.id}`,
+      answer: rule.answer,
+      source: `${rule.family}-image:${rule.id}`,
       image: { originalname: image.originalname, mimetype: image.mimetype, size: image.size, filename: image.filename },
       ip: req.ip
     });
-    return res.json({ answer: critical.answer, source: 'critical-rule', image: { originalname: image.originalname, mimetype: image.mimetype, size: image.size } });
+    return res.json({ answer: rule.answer, source: rule.family, image: { originalname: image.originalname, mimetype: image.mimetype, size: image.size } });
   }
 
   let answer = null;
