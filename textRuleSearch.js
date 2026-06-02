@@ -3,6 +3,7 @@ const path = require('path');
 
 const KNOWLEDGE_DIR = path.join(__dirname, 'knowledge');
 const RULE_FILES = [
+  'regla-archivos-mem-prioridad.txt',
   'reglas-prioritarias-nuevas.txt',
   'instrucciones-gpt-prioridad.txt',
   'certificado-expirado-prioritario.txt',
@@ -51,6 +52,7 @@ function scoreSection(query, section) {
   if (hay.includes(q)) score += 100;
 
   const strong = [
+    'archivo de memoria', 'archivo mem', '.mem', 'param.mem', 'config.mem', 'rece.mem',
     'atencion factura no electronica', 'factura no electronica', 'comprobante no electronico',
     'importar articulos', 'importacion de articulos', 'formato excel articulos', 'excel para articulos',
     'error al leer el archivo', 'smart app control', 'archivo de recursos no valido',
