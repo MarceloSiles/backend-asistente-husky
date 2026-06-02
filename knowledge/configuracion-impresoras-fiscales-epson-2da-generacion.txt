@@ -1,0 +1,23 @@
+CONFIGURACIÓN IMPRESORAS FISCALES EPSON DE LA 2DA GENERACIÓN
+
+La forma más simple de conectar la impresora fiscal a la PC es usando un cable USB provisto por Epson.
+
+Antes de usar ese cable hay que descargar e instalar:
+
+https://www.mcsiles.com.ar/app/Instalador_Puerto_USB_EPSON.rar
+
+Abrir el archivo y seguir los pasos normales del instalador.
+
+Aunque se use un puerto USB, Windows ve este puerto como si fuera un puerto serie COM 0.
+
+Configuración en Husky Gestión Comercial o Husky Facturador Electrónico:
+
+1) Entrar en Herramientas / Configuración / Puestos de Trabajo.
+2) Configurar la impresora fiscal correspondiente.
+3) En el caso de Husky POS, entrar en Configuración y completar los datos de impresora fiscal.
+
+Importante:
+
+El punto de venta de la impresora fiscal debe ser distinto al punto de venta del talonario manual.
+
+No confundir este circuito de impresora fiscal Epson con el ticket-factura electrónico en comandera térmica. Son circuitos distintos.
