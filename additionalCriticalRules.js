@@ -13,6 +13,41 @@ function includesAny(text, patterns) {
 
 const rules = [
   {
+    id: 'gmail-configuracion-2-pasos',
+    match: (q) => includesAny(q, ['gmail', 'smtp.gmail.com', 'contraseña de aplicaciones', 'contrasena de aplicaciones', 'configurar cuenta de correo', 'correo gmail']),
+    answer: `Vamos paso a paso 😊
+
+Para usar Gmail en Husky no alcanza con poner la contraseña común del correo. Google pide una “contraseña de aplicaciones”.
+
+Primero hay que activar la verificación en 2 pasos:
+
+1) Entrá a tu cuenta de Google.
+2) Andá a Seguridad.
+3) Buscá Verificación en 2 pasos.
+4) Activala siguiendo los pasos que te pide Google.
+
+Si no ves la opción “Verificación en 2 pasos”, entrá desde este link de Google:
+https://notifications.google.com/g/p/ANiao5oYQDkzKtgudHTjY7XN9bIvU6wAMmjcZlFsbAHsRzX_Y9CSooJHeMU4si0cTiUszMt76w4rJuqyyPx3Gz8V1HkHA6dJasrKuWDs8Io24vgBrpMQ2KsEBlMU3F2IaQNBFi4KzsM5V4Z1KGj_ocixSAuIDRE06HTV7VZGDZWAOy3bMLiIYhG34HOEWLW5hH95nlDj0hUMqX63zotDy33KkXfs
+
+Después generá la contraseña de aplicaciones:
+
+1) Volvé a Seguridad.
+2) Buscá Contraseñas de aplicaciones.
+3) Generá una nueva contraseña para Husky.
+4) Google te va a mostrar una clave de 16 caracteres.
+5) Copiala y pegala en Husky.
+
+Datos para cargar en Husky:
+
+- Servidor SMTP: smtp.gmail.com
+- Puerto: 465
+- SSL: activado
+- El servidor requiere autenticación: activado
+- Contraseña: la contraseña de aplicaciones que generó Google, no la contraseña común de Gmail.
+
+Si con esto no envía, probablemente haya un bloqueo de antivirus, firewall o red. En ese caso conviene que lo vea un técnico en PC.`
+  },
+  {
     id: 'certificado-expirado-actualizado',
     match: (q) => includesAny(q, ['certificado expirado', 'certificate expired']),
     answer: `El mensaje “certificado expirado” indica que venció el certificado digital .PFX que usa Husky para la facturación electrónica.
@@ -66,28 +101,6 @@ Parámetros en Husky:
 - Contraseña: la contraseña generada por Yahoo, no la contraseña normal de la cuenta.
 
 Si no funciona con esos datos, probablemente haya un bloqueo de antivirus, firewall o red, y debería revisarlo un técnico en PC.`
-  },
-  {
-    id: 'pdf-creator-instalacion',
-    match: (q) => includesAny(q, ['pdf creator', 'pdfcreator', 'makepdf', 'print2pdf', 'no genera pdf', 'no puedo generar pdf']),
-    answer: `Para problemas con PDF Creator, lo correcto es reinstalarlo y configurarlo como requiere Husky.
-
-Procedimiento:
-
-1) Verificá que no haya otra versión de PDF Creator instalada.
-2) Si existe, desinstalala completamente desde Panel de Control → Programas → Desinstalar un programa.
-3) Si el desinstalador pregunta si querés eliminar preferencias o ajustes, respondé que sí.
-4) Instalá la versión PDFCreator 1.2.3 usada por Husky.
-5) Abrí PDF Creator.
-6) Entrá en Impresora → Opciones.
-7) En Ajustes generales 2, configurá Comprobar actualizaciones en Nunca.
-8) Guardá.
-9) En AutoGuardado, activá el autoguardado y seleccioná formato PDF.
-10) Guardá y cerrá.
-
-Es importante que no quede instalada una versión anterior o distinta, porque puede generar conflictos con Husky.
-
-Si después de reinstalar correctamente sigue fallando, puede haber un problema de Windows, permisos o incompatibilidad, y debería revisarlo un técnico en PC o soporte Husky.`
   },
   {
     id: 'nota-debito-cheque-rechazado',
