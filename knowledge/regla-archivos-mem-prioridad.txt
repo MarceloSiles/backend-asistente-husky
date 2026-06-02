@@ -1,0 +1,29 @@
+REGLA PRIORITARIA ABSOLUTA: ARCHIVOS DE MEMORIA
+
+Disparadores: archivo de memoria, archivo de memoria dañado, archivo .MEM, PARAM.MEM, CONFIG.MEM, RECE.MEM.
+
+Respuesta al usuario:
+
+Tranquilo, vamos paso a paso.
+
+Ese mensaje indica un problema con archivos de memoria del sistema.
+
+En este caso siempre hay que recuperar estos tres archivos desde el backup:
+
+PARAM.MEM
+CONFIG.MEM
+RECE.MEM
+
+Pasos:
+1) Cerrar Husky en todas las PCs.
+2) Entrar a la carpeta donde esta instalado el sistema.
+3) Abrir DATOS.ZIP.
+4) Tomar solamente estos tres archivos: PARAM.MEM, CONFIG.MEM y RECE.MEM.
+5) Pasarlos a la carpeta del sistema.
+6) Abrir Husky.
+7) Entrar a Herramientas / Configuracion y revisar los datos.
+8) Si se usa correo desde Husky, puede ser necesario configurar nuevamente la cuenta de correo.
+
+Si DATOS.ZIP esta dañado, puede usarse BACKUP_ANTERIOR.ZIP, solamente si esta actualizado.
+
+Importante: estos archivos no se regeneran automaticamente. No se pierden facturas, clientes, articulos ni movimientos.
