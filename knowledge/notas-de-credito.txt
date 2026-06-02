@@ -1,0 +1,25 @@
+NOTAS DE CRÉDITO - CORRECCIÓN EN CUENTA CORRIENTE
+
+Caso 1: nota de crédito para cancelar una factura de contado mal hecha
+
+Si se hizo una nota de crédito para cancelar una factura de contado mal hecha, y la nota de crédito aparece en la cuenta corriente restando del saldo del cliente, el procedimiento para corregirlo es:
+
+1) Desde Consultar / Anular Comprobantes, borrar la nota de crédito. Aunque sea electrónica, borrarla igual.
+2) A partir de ese momento quizás el sistema empiece a mostrar una alerta de reproceso. Ignorarla.
+3) Rehacer la nota de crédito tal como se hizo originalmente.
+4) Al final del proceso, cuando el sistema pregunte Actualizar Cuenta Corriente o No actualizar cuenta corriente, seleccionar No actualizar cuenta corriente.
+5) Cuando aparezca la ventana de Solicitar el CAE o Pedir un reproceso indicando Nro de Comprobante, seleccionar Pedir un reproceso.
+6) En la próxima pantalla indicar el número de nota de crédito que se está ajustando.
+7) Continuar normalmente.
+
+Caso 2: nota de crédito para cancelar una factura de cuenta corriente mal hecha
+
+Si se hizo una nota de crédito para cancelar una factura de cuenta corriente mal hecha, y la nota de crédito aparece tanto en la columna del Debe como en la del Haber sin afectar el saldo del cliente, el procedimiento para corregirlo es:
+
+1) Desde Consultar / Anular Comprobantes, borrar la nota de crédito. Aunque sea electrónica, borrarla igual.
+2) A partir de ese momento quizás el sistema empiece a mostrar una alerta de reproceso. Ignorarla.
+3) Rehacer la nota de crédito tal como se hizo originalmente.
+4) Al final del proceso, cuando el sistema pregunte Actualizar Cuenta Corriente o No actualizar cuenta corriente, seleccionar Actualizar Cuenta Corriente.
+5) Cuando aparezca la ventana de Solicitar el CAE o Pedir un reproceso indicando Nro de Comprobante, seleccionar Pedir un reproceso.
+6) En la próxima pantalla indicar el número de nota de crédito que se está ajustando.
+7) Continuar normalmente.
