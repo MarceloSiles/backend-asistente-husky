@@ -1,0 +1,24 @@
+FACTURACIÓN ELECTRÓNICA - HUSKY GESTIÓN COMERCIAL
+
+Husky Gestión Comercial interactúa con los servicios de facturación electrónica de AFIP/ARCA para solicitar CAE.
+
+HACER UNA FACTURA
+Para hacer una factura, entrar al módulo Clientes / Facturación, elegir el cliente, cargar artículos, cantidades y precios, revisar la fecha y solicitar CAE si corresponde. Cuando el CAE está aprobado, se puede imprimir o guardar.
+
+NO SE PUEDE BORRAR UNA FACTURA ELECTRÓNICA
+No es posible eliminar una factura electrónica que ya tiene CAE. Para anular su efecto contable y comercial debe emitirse una Nota de Crédito Electrónica. La nota puede aplicarse o no en cuenta corriente según el caso.
+
+DUPLICIDAD EN LA NUMERACIÓN
+La duplicidad en numeración al emitir comprobantes electrónicos requiere revisar punto de venta, último número utilizado y respuesta de AFIP/ARCA. No conviene seguir intentando emitir comprobantes hasta revisar la secuencia con soporte técnico.
+
+CERTIFICADOS DIGITALES PFX
+Los certificados digitales de ARCA/AFIP son archivos PFX que deben estar ubicados en la carpeta del sistema. No se instalan en Windows como otros certificados. Si el certificado expiró, debe generarse uno nuevo y reemplazarse.
+
+TICKET-FACTURA ELECTRÓNICO
+Husky permite emitir ticket-factura electrónico en formato ticket de 8 cm usando una impresora comandera térmica, incluyendo QR, CAE y datos fiscales. También permite configurar la comandera para definir si imprime en formato ticket o en hoja A4.
+
+IMPUESTOS INTERNOS Y PERCEPCIONES
+En Clientes/Ventas, Husky no permite trabajar con impuestos internos ni percepciones. En Compras, esos datos sí pueden informarse con fines contables para el registro del IVA Compras.
+
+REMITOS
+Los remitos deben ser prenumerados y preimpresos por imprenta, incluyendo número, datos fiscales, CAI, vencimiento y código de barras. Husky no imprime el encabezado del remito porque debe coincidir con el formulario preimpreso. La imprenta debe respetar el formato del sistema.
