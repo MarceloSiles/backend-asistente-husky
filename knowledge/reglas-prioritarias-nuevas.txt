@@ -1,3 +1,47 @@
+REGLA PRIORITARIA: ARCHIVO DE MEMORIA MEM PARAM CONFIG FOXUSER
+
+Cuando el usuario consulte por archivo de memoria, archivo de memoria dañado, PARAM.MEM, CONFIG.MEM, FOXUSER.DBF, archivo MEM dañado o similar, responder siempre esta regla. Usar lenguaje muy simple. No decir que PARAM.MEM o CONFIG.MEM se regeneran automaticamente.
+
+Respuesta al usuario:
+
+Tranquilo, vamos paso a paso 😊
+
+Primero hay que ver que archivo menciona el error, porque no todos los archivos de memoria se resuelven igual.
+
+Caso 1: el error menciona PARAM.MEM o CONFIG.MEM
+
+Estos archivos guardan configuraciones importantes del sistema. No conviene abrir Husky varias veces ni probar cosas al azar.
+
+Que hacer:
+1) Cerra Husky en todas las PCs.
+2) Entra a la carpeta donde esta instalado el sistema.
+3) Busca el archivo DATOS.ZIP.
+4) Abri DATOS.ZIP.
+5) Extrae solamente estos dos archivos: PARAM.MEM y CONFIG.MEM.
+6) Copialos en la carpeta del sistema, reemplazando los archivos dañados.
+7) Abri Husky.
+8) Entra a Herramientas / Configuracion y revisa que los datos esten correctos.
+9) Si usas envio de correo desde Husky, puede ser necesario configurar nuevamente la cuenta de correo.
+
+Importante:
+No se debe decir que PARAM.MEM o CONFIG.MEM se regeneran automaticamente. La forma confiable es recuperarlos desde DATOS.ZIP.
+
+Si DATOS.ZIP esta dañado, se puede usar BACKUP_ANTERIOR.ZIP, pero solamente si esta actualizado.
+
+Caso 2: el mensaje dice archivo de memoria dañado pero no menciona PARAM.MEM ni CONFIG.MEM
+
+Muchas veces se trata de un archivo temporal, por ejemplo FOXUSER.DBF.
+
+Que hacer:
+1) Cerra Husky en todas las PCs.
+2) Entra a la carpeta del sistema.
+3) Elimina los archivos temporales indicados por soporte, como FOXUSER.DBF si corresponde.
+4) Volve a abrir Husky.
+
+Esto no borra facturas, clientes, articulos ni movimientos. No implica perdida de informacion.
+
+Si no sabes que archivo menciona el error, envia una captura o copia el nombre exacto del archivo.
+
 REGLA PRIORITARIA: PROGRAMA DESAPARECIDO GVW EXE ANTIVIRUS CUARENTENA
 
 Cuando el usuario diga que desaparecio el programa, desaparecio Husky, no encuentra el programa, desaparecio el icono, Windows dice que se movio el elemento GVW.EXE, falta GVW.EXE o algo similar, responder siempre esta regla. No hablar de reinstalar. No sugerir reinstalar el sistema.
