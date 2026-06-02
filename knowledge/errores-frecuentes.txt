@@ -1,0 +1,33 @@
+ERRORES FRECUENTES - HUSKY GESTIÓN COMERCIAL
+
+Este documento resume conocimiento operativo inicial del asistente técnico de Husky Software.
+
+ERROR: NO ES UNA TABLA / DBF DAÑADO
+Cuando aparece un mensaje indicando que un archivo DBF no es una tabla, puede deberse a que el archivo está dañado, faltante o fuera de sincronía. Puede ocurrir con distintos archivos, como AUXMOV3.DBF. La recomendación es no continuar usando el sistema y contactar al soporte técnico de Husky Software. No se deben copiar archivos sueltos sin asistencia.
+
+CLIENTES.DBF DAÑADO
+Ante rotura del archivo CLIENTES.DBF, la primera recomendación es no hacer más nada con el sistema y adjuntar los archivos CLIENTES.BAK y CLIENTES.TBK al soporte de Husky Software para intentar su reparación.
+
+PARAM.MEM / CONFIG.MEM DAÑADOS
+Si PARAM.MEM o CONFIG.MEM aparecen dañados, no debe indicarse que se regeneran automáticamente. Se debe cerrar el sistema en todas las PCs y, si existe backup actualizado, abrir DATOS.ZIP dentro de la carpeta del sistema y extraer únicamente PARAM.MEM y CONFIG.MEM, reemplazando los existentes. Si hay dudas, contactar a soporte.
+
+GVW.EXE / ICONO DESAPARECIDO / ANTIVIRUS
+Si desaparece el ícono o Windows indica que se movió GVW.EXE, generalmente es un falso positivo del antivirus que envió el ejecutable a cuarentena. Debe intervenir un técnico en PC para restaurar el archivo y agregar excepción. No hay pérdida de datos porque las bases de Husky no fueron afectadas.
+
+CERTIFICADO EXPIRADO
+El mensaje certificado expirado indica que el certificado digital PFX venció. Hay que generar uno nuevo desde AFIP/ARCA y reemplazar el anterior en la carpeta del sistema. Se recomienda contactar al soporte técnico de Husky.
+
+PFX / FIREWALL / ANTIVIRUS
+El archivo PFX debe estar presente dentro de la carpeta del sistema. No se instala en Windows como otros certificados. Salvo el caso de certificado expirado, muchos problemas relacionados con PFX se resuelven agregando excepción en antivirus/firewall para la carpeta del sistema. Si no alcanza, puede ayudar reiniciar el router.
+
+FALLÓ AL INTENTAR OBTENER EL TICKET DE ACCESO AL SERVIDOR AFIP
+Este error suele indicar un problema de conectividad con AFIP/ARCA. Puede deberse a internet, servidores temporariamente caídos, antivirus/firewall bloqueando, PFX dañado o vencido, o fecha/hora incorrecta. Revisar conexión, reiniciar router, revisar excepciones y fecha/hora.
+
+SE HA TERMINADO LA CONEXIÓN: ERROR INESPERADO DE RECEPCIÓN
+Este error suele estar relacionado con conectividad entre Husky y AFIP/ARCA. Verificar internet, router, DNS, antivirus/firewall, PFX y fecha/hora del sistema.
+
+ASTERISCOS EN IMPORTES DE FACTURA IMPRESA
+Si aparecen asteriscos en los importes impresos, suele deberse a que el espacio previsto en el diseño ya no alcanza para importes actuales, muchas veces por inflación. Puede requerir ajuste de diseño o migrar a la última versión.
+
+EL ARCHIVO DE MEMORIA ESTÁ DAÑADO
+Este error suele relacionarse con archivos temporales como FOXUSER.DBF. Se soluciona cerrando el sistema en todas las PCs, eliminando archivos temporales indicados por soporte y volviendo a abrir. No implica pérdida de información.
