@@ -1,35 +1,64 @@
-INSTALACIÓN DEL PDF CREATOR PARA USAR CON HUSKY
+PROBLEMAS PARA GENERAR PDF EN HUSKY
 
-1) Asegurarse de que no haya una versión de PDF Creator instalada en la PC. Si existe, hay que desinstalarla completamente desde Panel de Control de Windows / Programas / Desinstalar un programa.
+IMPORTANTE SEGÚN LA VERSIÓN DEL SISTEMA
 
-Cuando el desinstalador pregunte si se quieren eliminar las preferencias o ajustes del programa, responder que sí.
+Si el usuario usa Husky versión 35 o anterior:
+- El sistema usa PDF Creator.
+- Ante problemas para generar PDF, la primera solución recomendada es reinstalar y configurar PDF Creator.
 
-2) Descargar:
+Si el usuario usa Husky versión 36 o superior:
+- Ya no se usa PDF Creator como solución principal.
+- Se usa la impresora nativa de Windows llamada Microsoft Print to PDF.
+- En ese caso hay que revisar que Windows 10 o superior tenga activa esa impresora y que esté disponible en el sistema.
 
+RESPUESTA RECOMENDADA PARA EL ASISTENTE
+
+Si el usuario no sabe qué versión tiene, primero preguntarle la versión de Husky. Si necesita una orientación rápida, indicarle:
+
+1) Si tu Husky es versión 35 o anterior, revisamos PDF Creator.
+2) Si tu Husky es versión 36 o superior, revisamos Microsoft Print to PDF.
+
+CASO HUSKY VERSIÓN 35 O ANTERIOR - PDF CREATOR
+
+Vamos paso a paso. No es grave, pero hay que reinstalar PDF Creator correctamente.
+
+Link de descarga de PDF Creator:
 https://www.mcsiles.com.ar/app/PDFCreator-1_2_3_setup.rar
 
-Abrir el archivo. Se verá un archivo llamado PDFCreator-1_2_3_setup.exe. Ejecutarlo y seguir las instrucciones normales de instalación.
+Pasos:
 
-Puede ocurrir que durante la instalación Windows solicite descargar e instalar alguna característica adicional. Aceptar. Esto puede demorar unos minutos. Cuando termine, puede que la instalación de PDF Creator no continúe automáticamente; en ese caso ubicar el ícono de instalación en la barra de tareas y continuar.
+1) Cerrá Husky.
+2) En Windows, entrá a Panel de Control / Programas / Desinstalar un programa.
+3) Si hay alguna versión de PDF Creator instalada, desinstalala.
+4) Cuando pregunte si querés eliminar preferencias o ajustes del programa, respondé que sí.
+5) Descargá PDF Creator desde el link indicado.
+6) Abrí el archivo descargado.
+7) Ejecutá PDFCreator-1_2_3_setup.exe.
+8) Seguí los pasos normales de instalación.
+9) Puede ocurrir que Windows pida instalar alguna característica adicional. Aceptá y esperá a que termine.
+10) Al finalizar, abrí PDF Creator desde el ícono del escritorio.
+11) Entrá en Impresora / Opciones.
+12) Seleccioná Ajustes generales 2.
+13) En Comprobar actualizaciones, elegí Nunca.
+14) Guardá.
+15) Entrá en AutoGuardado.
+16) Activá AutoGuardado.
+17) En formato de autoguardado, elegí PDF.
+18) Guardá y cerrá todo.
+19) Abrí Husky y probá generar el PDF nuevamente.
 
-3) Finalizada la instalación, abrir el ícono de PDF Creator en el escritorio.
+Importante: no debe quedar instalada otra versión de PDF Creator, porque puede generar conflictos.
 
-4) Seleccionar Impresora y luego Opciones.
+CASO HUSKY VERSIÓN 36 O SUPERIOR - MICROSOFT PRINT TO PDF
 
-5) Seleccionar Ajustes generales 2.
+En versión 36 o superior, Husky usa la impresora nativa de Windows Microsoft Print to PDF.
 
-6) En Comprobar actualizaciones, seleccionar Nunca y guardar.
+Pasos básicos:
 
-Esto evita que PDF Creator intente actualizarse a versiones que no son compatibles con Husky.
+1) Verificá que la PC tenga Windows 10 o superior.
+2) Entrá a Configuración de Windows / Impresoras y escáneres.
+3) Buscá Microsoft Print to PDF.
+4) Si no aparece, tiene que activarla o reinstalarla un técnico en PC.
+5) Si aparece, abrí Husky y revisá que el sistema esté usando esa impresora para generar PDF.
 
-7) Ir a AutoGuardado y seleccionar Activar Autoguardado.
-
-8) En formato de autoguardado seleccionar PDF.
-
-9) Guardar y cerrar.
-
-Importante:
-
-Es muy importante asegurarse de que no exista una versión anterior de PDF Creator instalada en esa PC, porque podría provocar conflictos.
-
-Si el problema persiste luego de reinstalar y configurar correctamente PDF Creator, puede deberse a una actualización de Windows o incompatibilidad. En ese caso debe intervenir soporte de Husky o técnico en PC.
+Si el usuario no sabe revisar impresoras de Windows, recomendar técnico en PC o soporte Husky.
