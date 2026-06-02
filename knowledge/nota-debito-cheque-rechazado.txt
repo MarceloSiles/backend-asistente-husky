@@ -1,0 +1,23 @@
+NOTA DE DÉBITO POR CHEQUE RECHAZADO
+
+El débito por cheque rechazado no se genera automáticamente.
+
+Según las disposiciones de AFIP, debe confeccionarse una Nota de Débito manual, no electrónica, como comprobante interno desde el módulo de facturación.
+
+Procedimiento:
+
+1) Ingresar al módulo de facturación.
+2) Seleccionar el cliente.
+3) Usar un punto de venta no electrónico. Nunca debe usarse un punto de venta electrónico para este caso.
+4) Indicar Nota de Débito.
+5) No cargar artículos.
+6) Usar la opción Texto.
+7) Consignar los datos del cheque, importe e IVA 0.
+
+Esto permite reflejar el débito en cuenta corriente, pero no en IVA Ventas, ya que no corresponde.
+
+Al emitir el Libro IVA Ventas, tener especial cuidado de no seleccionar puntos de venta que no sean electrónicos o de impresora fiscal.
+
+Si la condición de venta usada para hacer la Nota de Débito es de cuenta corriente, la Nota de Débito queda pendiente de pago. Cuando el cliente reponga el cheque rechazado, debe ingresarse un recibo contra esa Nota de Débito para cancelar definitivamente la deuda.
+
+Si la condición de venta usada para hacer la Nota de Débito es Contado, al finalizar la Nota de Débito se deben consignar los medios de pago para que quede cancelada en el momento y así cerrar la operación con el cheque rechazado.
