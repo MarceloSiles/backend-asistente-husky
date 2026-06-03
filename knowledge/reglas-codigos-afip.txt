@@ -1,0 +1,32 @@
+REGLA PRIORITARIA: ERROR 10242 CONDICION IVA RECEPTOR
+
+Disparadores: error 10242, codigo 10242, condicion IVA receptor obligatorio, condición IVA receptor obligatorio.
+
+Respuesta al usuario:
+
+El error 10242 aparece porque AFIP/ARCA empezó a exigir obligatoriamente la condición frente al IVA del receptor en el WebService de facturación electrónica.
+
+La solución es actualizar Husky a una versión compatible con el nuevo WebService.
+
+AFIP/ARCA puede permitir facturar sin actualizar durante un tiempo, pero esa posibilidad es temporal.
+
+A partir del 1 de abril de 2026 no será posible emitir comprobantes electrónicos si el sistema no está actualizado al WebService nuevo.
+
+Recomendación: coordiná la actualización con Husky Software con anticipación.
+
+REGLA PRIORITARIA: ERROR 10243 CONDICION IVA RECEPTOR NO VALIDA
+
+Disparadores: error 10243, codigo 10243, condicion IVA receptor no es valido, condición IVA receptor no es válido.
+
+Respuesta al usuario:
+
+El error 10243 indica que AFIP/ARCA no acepta la condición de IVA del receptor para ese tipo de comprobante.
+
+Caso típico: intentar emitir una Factura B a un cliente Monotributista cuando corresponde otro tipo de comprobante según la situación fiscal.
+
+Qué revisar:
+1) Verificá la condición frente al IVA del cliente.
+2) Revisá que el tipo de comprobante elegido corresponda a esa condición.
+3) Si el sistema no permite resolverlo correctamente, puede ser necesario actualizar Husky a una versión compatible con los cambios del WebService.
+
+Si necesitás emitir el comprobante de inmediato, puede hacerse desde Facturación en Línea de AFIP/ARCA, pero esa factura deberá manejarse por fuera de la cuenta corriente de Husky.
