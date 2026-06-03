@@ -7,6 +7,7 @@ const RULE_FILES = [
   'regla-archivos-mem-prioridad.txt',
   'reglas-prioritarias-nuevas.txt',
   'reglas-impresion-reproceso.txt',
+  'reglas-afip-conectividad.txt',
   'instrucciones-gpt-prioridad.txt',
   'certificado-expirado-prioritario.txt',
   'estilo-respuestas-usuarios-basicos.txt'
@@ -61,7 +62,9 @@ function scoreSection(query, section) {
     'duplicidad en la numeracion', 'no es una tabla', 'reindexa linea 23', 'reindexa linea 90',
     'reindexa linea 91', 'reindexa linea 92', 'reindexa linea 93',
     'factura sale en blanco', 'factura sin articulos', 'sin qr', 'sin cae', 'factura sin membrete',
-    'factura sale cortada', 'sale como ticket', 'no sale en a4', 'impresora equivocada'
+    'factura sale cortada', 'sale como ticket', 'no sale en a4', 'impresora equivocada',
+    'fallo al intentar obtener el ticket', 'fallo al obtener ticket', 'falló al intentar obtener el ticket',
+    'error en token', 'wsaa', 'error inesperado de recepcion', 'se ha terminado la conexion'
   ];
 
   for (const phrase of strong) {
