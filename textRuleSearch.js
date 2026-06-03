@@ -11,6 +11,7 @@ const RULE_FILES = [
   'reglas-varias-prioritarias.txt',
   'reglas-comerciales-prioritarias.txt',
   'reglas-correo-windows-impresoras.txt',
+  'reglas-instalacion-actualizacion.txt',
   'instrucciones-gpt-prioridad.txt',
   'certificado-expirado-prioritario.txt',
   'estilo-respuestas-usuarios-basicos.txt'
@@ -75,7 +76,10 @@ function scoreSection(query, section) {
     'agregar artículo', 'cargar articulo nuevo', 'cargar artículo nuevo', 'retenciones',
     'percepciones', 'impuestos internos', 'remito preimpreso', 'cai del remito',
     'yahoo', 'smtp.mail.yahoo.com', 'tmusb64', 'integridad de memoria', 'aislamiento del nucleo',
-    'aislamiento del núcleo', 'ticket factura', 'ticket-factura', 'comandera', '80 mm', '8 cm'
+    'aislamiento del núcleo', 'ticket factura', 'ticket-factura', 'comandera', '80 mm', '8 cm',
+    'actualizar husky', 'nueva version', 'nueva versión', 'windows 10', 'windows server',
+    'pdf creator', 'microsoft print to pdf', 'wsafipfe', 'wafipfe', 'dll factura electronica',
+    'dll factura electrónica', 'instalar en varias pc', 'terminales', 'multiusuario'
   ];
 
   for (const phrase of strong) {
