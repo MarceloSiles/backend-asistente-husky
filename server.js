@@ -11,6 +11,7 @@ const { findCriticalRuleAnswer } = require('./criticalRules');
 const { findAdditionalRuleAnswer } = require('./additionalCriticalRules');
 const { findDeterministicRuleAnswer } = require('./deterministicRules');
 const { findDeterministicTopRuleAnswer } = require('./deterministicTopRules');
+const { buildContextualQuestion, updateSessionAfterAnswer, getSessionDebug } = require('./conversationMemory');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -77,6 +78,11 @@ Reglas de estilo obligatorias:
 - Primero explicá qué significa el problema en palabras simples.
 - Después indicá qué hacer, paso a paso.
 - No des muchas alternativas juntas si pueden confundir al usuario.
+
+Reglas de conversación:
+- Si el usuario responde con un dato corto como “línea 136”, “versión 35”, “sí”, “no”, “Gmail” o similar, interpretalo como continuación del tema anterior.
+- No trates una respuesta corta como una consulta nueva si existe contexto previo.
+- Si el dato corto completa una pregunta anterior, respondé ya con el procedimiento correspondiente.
 
 Reglas de prioridad:
 1) Si la base de conocimiento contiene una regla, disparador, prioridad absoluta o respuesta obligatoria relacionada con la consulta, obedecela exactamente y no la mezcles con otros casos.
@@ -187,19 +193,31 @@ async function askOpenAIVision(question, image) {
 }
 
 async function buildAnswer(question, req) {
-  const rule = findRuleAnswer(question);
+  const originalQuestion = String(question || '').trim();
+  const contextual = buildContextualQuestion(originalQuestion, req);
+  const effectiveQuestion = contextual.question;
+
+  const rule = findRuleAnswer(effectiveQuestion);
   if (rule) {
-    saveLog({ question, answer: rule.answer, source: `${rule.family}:${rule.id}`, ip: req.ip });
-    return { answer: rule.answer, source: rule.family };
+    saveLog({
+      question: originalQuestion,
+      effectiveQuestion,
+      contextualized: contextual.contextualized,
+      answer: rule.answer,
+      source: `${rule.family}:${rule.id}`,
+      ip: req.ip
+    });
+    updateSessionAfterAnswer(contextual.session, originalQuestion, effectiveQuestion, rule.answer, rule.family);
+    return { answer: rule.answer, source: rule.family, contextualized: contextual.contextualized };
   }
 
-  const faqAnswer = findFaqAnswer(question);
+  const faqAnswer = findFaqAnswer(effectiveQuestion);
   let answer = faqAnswer;
   let source = faqAnswer ? 'faq' : 'default';
-  let knowledgeResults = searchKnowledge(question, 8);
+  let knowledgeResults = searchKnowledge(effectiveQuestion, 8);
 
   try {
-    const ai = await askOpenAI(question);
+    const ai = await askOpenAI(effectiveQuestion);
     if (ai?.answer) {
       answer = ai.answer;
       source = ai.knowledgeResults?.length ? 'openai-knowledge' : 'openai';
@@ -214,13 +232,16 @@ async function buildAnswer(question, req) {
   }
 
   saveLog({
-    question,
+    question: originalQuestion,
+    effectiveQuestion,
+    contextualized: contextual.contextualized,
     answer,
     source,
     knowledgeSources: knowledgeResults.map((r) => ({ filename: r.filename, index: r.index, score: r.score })),
     ip: req.ip
   });
-  return { answer, source };
+  updateSessionAfterAnswer(contextual.session, originalQuestion, effectiveQuestion, answer, source);
+  return { answer, source, contextualized: contextual.contextualized };
 }
 
 app.get('/api', (req, res) => {
@@ -289,16 +310,21 @@ app.post('/chat-image', upload.single('image'), async (req, res) => {
   const image = req.file;
   if (!image) return res.status(400).json({ error: 'Falta la imagen.' });
 
-  const rule = question ? findRuleAnswer(question) : null;
+  const contextual = buildContextualQuestion(question || '(consulta con imagen)', req);
+  const effectiveQuestion = contextual.question;
+  const rule = question ? findRuleAnswer(effectiveQuestion) : null;
   if (rule) {
     saveLog({
       question: question || '(consulta con imagen)',
+      effectiveQuestion,
+      contextualized: contextual.contextualized,
       answer: rule.answer,
       source: `${rule.family}-image:${rule.id}`,
       image: { originalname: image.originalname, mimetype: image.mimetype, size: image.size, filename: image.filename },
       ip: req.ip
     });
-    return res.json({ answer: rule.answer, source: rule.family, image: { originalname: image.originalname, mimetype: image.mimetype, size: image.size } });
+    updateSessionAfterAnswer(contextual.session, question || '(consulta con imagen)', effectiveQuestion, rule.answer, rule.family);
+    return res.json({ answer: rule.answer, source: rule.family, contextualized: contextual.contextualized, image: { originalname: image.originalname, mimetype: image.mimetype, size: image.size } });
   }
 
   let answer = null;
@@ -307,13 +333,13 @@ app.post('/chat-image', upload.single('image'), async (req, res) => {
   let knowledgeResults = [];
 
   try {
-    const ai = await askOpenAIVision(question, image);
+    const ai = await askOpenAIVision(effectiveQuestion, image);
     if (ai?.answer) {
       answer = ai.answer;
       source = ai.knowledgeResults?.length ? 'openai-vision-knowledge' : 'openai-vision';
       knowledgeResults = ai.knowledgeResults || [];
 
-      const detectedRule = findRuleAnswer(`${question}\n${answer}`);
+      const detectedRule = findRuleAnswer(`${effectiveQuestion}\n${answer}`);
       if (detectedRule) {
         answer = detectedRule.answer;
         source = `${detectedRule.family}-image-detected`;
@@ -334,6 +360,8 @@ app.post('/chat-image', upload.single('image'), async (req, res) => {
 
   saveLog({
     question: question || '(consulta con imagen sin texto)',
+    effectiveQuestion,
+    contextualized: contextual.contextualized,
     answer,
     source,
     debugError,
@@ -341,8 +369,9 @@ app.post('/chat-image', upload.single('image'), async (req, res) => {
     image: { originalname: image.originalname, mimetype: image.mimetype, size: image.size, filename: image.filename },
     ip: req.ip
   });
+  updateSessionAfterAnswer(contextual.session, question || '(consulta con imagen sin texto)', effectiveQuestion, answer, source);
 
-  res.json({ answer, source, image: { originalname: image.originalname, mimetype: image.mimetype, size: image.size } });
+  res.json({ answer, source, contextualized: contextual.contextualized, image: { originalname: image.originalname, mimetype: image.mimetype, size: image.size } });
 });
 
 app.get('/chat-test', async (req, res) => {
@@ -350,6 +379,10 @@ app.get('/chat-test', async (req, res) => {
   if (!question) return res.status(400).json({ error: 'Falta el parámetro message.', example: '/chat-test?message=No%20puedo%20pedir%20CAE' });
   const result = await buildAnswer(question, req);
   res.json({ question, ...result });
+});
+
+app.get('/debug-session', (req, res) => {
+  res.json(getSessionDebug(req));
 });
 
 app.get('/stats', (req, res) => {
