@@ -25,6 +25,45 @@ Paso 3: Entrá en Propiedades.
 Paso 4: Mirá el campo Destino o Iniciar en. Ahí vas a ver la carpeta donde está instalado el sistema.`;
 
 const answers = {
+  memGuided: `Claro 😊 Te guío paso a paso.
+
+La idea es recuperar desde DATOS.ZIP solamente estos archivos:
+- PARAM.MEM
+- CONFIG.MEM
+- RECE.MEM
+
+Paso 1: Cerrá Husky en todas las PCs.
+No debe quedar abierto en ninguna terminal.
+
+Paso 2: Buscá la carpeta del sistema.
+Generalmente es C:\\Husky, pero puede estar en otra ubicación.
+
+Si no sabés dónde está:
+- Buscá el acceso directo de Husky en el Escritorio.
+- Hacé clic derecho sobre el acceso directo.
+- Entrá en Propiedades.
+- Mirá el campo Destino o Iniciar en. Ahí vas a ver la carpeta donde está instalado el sistema.
+
+Paso 3: Entrá a esa carpeta.
+Buscá un archivo llamado DATOS.ZIP.
+
+Paso 4: Abrí DATOS.ZIP con doble clic.
+No extraigas todo el contenido. Solo vamos a recuperar 3 archivos.
+
+Paso 5: Dentro de DATOS.ZIP, buscá estos archivos:
+- PARAM.MEM
+- CONFIG.MEM
+- RECE.MEM
+
+Paso 6: Copiá o extraé únicamente esos 3 archivos dentro de la carpeta del sistema.
+Windows te puede preguntar si querés reemplazar los archivos existentes. Respondé que sí.
+
+Paso 7: Cuando termine la copia, abrí Husky nuevamente.
+Probá si el error desapareció.
+
+⚠️ Importante:
+No extraigas todo DATOS.ZIP completo, porque podrías pisar otros datos del sistema. Solo deben recuperarse PARAM.MEM, CONFIG.MEM y RECE.MEM.`,
+
   verStruFe: `Hola 😊 Ese error corresponde a una verificación interna de archivos del sistema.
 
 Si el mensaje dice VER_STRU_FE, lo más importante es no seguir probando cosas al azar.
@@ -128,6 +167,11 @@ Con eso puedo orientarte mejor sin hacerte tocar cosas que no corresponden.`
 };
 
 const rules = [
+  {
+    id: 'repregunta-mem-datoszip',
+    answer: answers.memGuided,
+    match: q => q.includes('respuesta anterior del asistente') && q.includes('datos.zip') && q.includes('param.mem') && q.includes('config.mem') && q.includes('rece.mem')
+  },
   {
     id: 'ver-stru-fe-linea-136',
     answer: answers.linea136,
