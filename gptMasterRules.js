@@ -2,7 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
 
-const BUNDLE_DIR = path.join(__dirname, 'knowledge', 'gpt_master_bundle');
+const BUNDLE_DIRS = [
+  path.join(__dirname, 'knowledge', 'gpt_master_bundle'),
+  path.join(__dirname, 'knowledge'),
+  __dirname
+];
 
 function normalize(text) {
   return String(text || '')
@@ -23,26 +27,34 @@ function tokens(text) {
 
 let cachedText = null;
 let cachedBlocks = null;
+let loadedFrom = null;
+
+function readBundleFromDir(dir) {
+  if (!fs.existsSync(dir)) return '';
+  const names = fs.readdirSync(dir)
+    .filter(name => /^part\d+\.b64$/i.test(name))
+    .sort();
+  if (!names.length) return '';
+  const parts = names.map(name => fs.readFileSync(path.join(dir, name), 'utf8').trim()).join('');
+  if (!parts) return '';
+  loadedFrom = dir;
+  return zlib.gunzipSync(Buffer.from(parts, 'base64')).toString('utf8');
+}
 
 function loadMasterText() {
   if (cachedText !== null) return cachedText;
   cachedText = '';
 
-  try {
-    if (fs.existsSync(BUNDLE_DIR)) {
-      const parts = fs.readdirSync(BUNDLE_DIR)
-        .filter(name => /^part\d+\.b64$/i.test(name))
-        .sort()
-        .map(name => fs.readFileSync(path.join(BUNDLE_DIR, name), 'utf8').trim())
-        .join('');
-
-      if (parts) {
-        cachedText = zlib.gunzipSync(Buffer.from(parts, 'base64')).toString('utf8');
+  for (const dir of BUNDLE_DIRS) {
+    try {
+      const text = readBundleFromDir(dir);
+      if (text) {
+        cachedText = text;
+        break;
       }
+    } catch (error) {
+      console.error(`No se pudo leer bundle maestro en ${dir}:`, error.message);
     }
-  } catch (error) {
-    console.error('No se pudo leer gpt_master_bundle:', error.message);
-    cachedText = '';
   }
 
   return cachedText;
@@ -231,7 +243,8 @@ function getGptMasterStatus() {
     loaded: Boolean(loadMasterText()),
     chars: loadMasterText().length,
     blocks: getBlocks().length,
-    bundleDir: BUNDLE_DIR
+    loadedFrom,
+    bundleDirs: BUNDLE_DIRS
   };
 }
 
