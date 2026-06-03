@@ -28,7 +28,7 @@ function normalize(text) {
 }
 
 function tokens(text) {
-  const stop = new Set(['que','con','para','por','una','uno','del','los','las','como','cuando','donde','este','esta','esto','hay','sin','pero','sistema','husky','software','me','mi','al','el','la','lo','un','de','en','y','o']);
+  const stop = new Set(['que','con','para','por','una','uno','del','los','las','como','cuando','donde','este','esta','esto','hay','sin','pero','sistema','husky','software','me','mi','al','el','la','lo','un','de','en','y','o','error','aparece','mensaje']);
   return normalize(text).split(' ').filter(w => w.length >= 3 && !stop.has(w));
 }
 
@@ -38,7 +38,7 @@ function loadRuleSections() {
     const filePath = path.join(KNOWLEDGE_DIR, file);
     if (!fs.existsSync(filePath)) continue;
     const text = fs.readFileSync(filePath, 'utf8').replace(/\r\n/g, '\n');
-    const parts = text.split(/\n(?=(REGLA PRIORITARIA:|ERROR:|TEMA:|PRIORIDAD ABSOLUTA|IMPORTANTE SEGUN LA VERSION|CASO HUSKY))/i)
+    const parts = text.split(/\n(?=(REGLA PRIORITARIA:|ERROR:|TEMA:|PRIORIDAD ABSOLUTA|IMPORTANTE SEGUN LA VERSION|CASO HUSKY|NOTA PARA EL MODELO|NOTAS PARA EL MODELO|NOTA:))/i)
       .map(p => p.trim())
       .filter(Boolean);
     for (const part of parts) {
@@ -59,7 +59,7 @@ function scoreSection(query, section) {
   if (hay.includes(q)) score += 100;
 
   const strong = [
-    'archivo de memoria', 'archivo mem', '.mem', 'param.mem', 'config.mem', 'rece.mem',
+    'ver_stru_fe', 'archivo de memoria', 'archivo mem', '.mem', 'param.mem', 'config.mem', 'rece.mem',
     'atencion factura no electronica', 'factura no electronica', 'comprobante no electronico',
     'importar articulos', 'importacion de articulos', 'formato excel articulos', 'excel para articulos',
     'error al leer el archivo', 'smart app control', 'archivo de recursos no valido',
@@ -91,7 +91,9 @@ function scoreSection(query, section) {
     if (hay.includes(t)) score += section.title && normalize(section.title).includes(t) ? 8 : 2;
   }
 
-  if (/regla prioritaria|prioridad absoluta|respuesta obligatoria/i.test(section.text)) score += 15;
+  if (/regla prioritaria|prioridad absoluta|respuesta obligatoria|nota para el modelo|notas para el modelo/i.test(section.text)) score += 15;
+
+  if (qt.length > 0 && !qt.some(t => hay.includes(t))) score = 0;
   return score;
 }
 
@@ -100,6 +102,17 @@ function cleanAnswer(section) {
   text = text.replace(/^REGLA PRIORITARIA:\s*/i, '');
   text = text.replace(/^ERROR:\s*/i, '');
   text = text.replace(/^TEMA:\s*/i, '');
+  text = text.replace(/^NOTA PARA EL MODELO:?\s*/i, '');
+  text = text.replace(/^NOTAS PARA EL MODELO:?\s*/i, '');
+  text = text.replace(/^NOTA:?\s*/i, '');
+
+  const marker = text.match(/Respuesta al usuario:\s*/i);
+  if (marker && typeof marker.index === 'number') {
+    text = text.slice(marker.index + marker[0].length);
+  }
+
+  text = text.replace(/^Disparadores:.*?(\n\n|$)/is, '');
+  text = text.replace(/^Respuesta obligatoria:\s*/i, '');
   text = text.replace(/\n\n+/g, '\n\n').trim();
   return text;
 }
@@ -108,7 +121,7 @@ function findTextRuleAnswer(query) {
   const sections = loadRuleSections();
   const scored = sections
     .map(section => ({ ...section, score: scoreSection(query, section) }))
-    .filter(section => section.score >= 18)
+    .filter(section => section.score >= 30)
     .sort((a, b) => b.score - a.score);
 
   if (!scored.length) return null;
