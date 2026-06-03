@@ -6,6 +6,7 @@ const KNOWLEDGE_DIR = path.join(__dirname, 'knowledge');
 const RULE_FILES = [
   'regla-archivos-mem-prioridad.txt',
   'reglas-prioritarias-nuevas.txt',
+  'reglas-impresion-reproceso.txt',
   'instrucciones-gpt-prioridad.txt',
   'certificado-expirado-prioritario.txt',
   'estilo-respuestas-usuarios-basicos.txt'
@@ -58,7 +59,9 @@ function scoreSection(query, section) {
     'importar articulos', 'importacion de articulos', 'formato excel articulos', 'excel para articulos',
     'error al leer el archivo', 'smart app control', 'archivo de recursos no valido',
     'duplicidad en la numeracion', 'no es una tabla', 'reindexa linea 23', 'reindexa linea 90',
-    'reindexa linea 91', 'reindexa linea 92', 'reindexa linea 93'
+    'reindexa linea 91', 'reindexa linea 92', 'reindexa linea 93',
+    'factura sale en blanco', 'factura sin articulos', 'sin qr', 'sin cae', 'factura sin membrete',
+    'factura sale cortada', 'sale como ticket', 'no sale en a4', 'impresora equivocada'
   ];
 
   for (const phrase of strong) {
