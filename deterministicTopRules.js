@@ -18,20 +18,38 @@ const answers = {
 
 Si el mensaje dice VER_STRU_FE, lo más importante es no seguir probando cosas al azar.
 
-En muchos casos, cuando aparece relacionado con líneas como 136, 90, 91, 92 o 93, el problema puede estar vinculado al archivo de clientes.
+Para poder darte la indicación correcta, hay que mirar el número de línea que aparece en el error.
 
 Qué hacer:
 
 1) Cerrá Husky en todas las PCs.
 2) Sacá una captura del error completo, si podés.
-3) Anotá si el mensaje muestra un número de línea.
-4) Si menciona línea 136, 90, 91, 92 o 93, enviá al soporte de Husky los archivos CLIENTES.BAK y CLIENTES.TBK.
-5) No restaures backups ni borres archivos si no estás seguro.
+3) Anotá el número de línea que muestra el mensaje.
+4) Si aparece línea 136, 90, 91, 92 o 93, el caso está relacionado con el archivo de clientes.
+5) En ese caso, enviá al soporte de Husky los archivos CLIENTES.BAK y CLIENTES.TBK.
 
 Importante:
-No es un caso de condición de IVA ni de error 10242. No corresponde actualizar por ese mensaje sin revisar antes el error exacto.
+No restaures backups ni borres archivos si no estás seguro.
 
-Si me copiás el mensaje completo, especialmente el número de línea, te puedo guiar con más precisión.`,
+Si me copiás el número de línea, te puedo orientar mejor.`,
+
+  linea136: `Hola 😊 Ese error en línea 136 está relacionado con el archivo de clientes.
+
+No conviene seguir probando cosas al azar, porque se puede empeorar el problema.
+
+Hacé esto:
+
+1) Cerrá Husky en todas las PCs.
+2) Entrá a la carpeta donde está instalado el sistema.
+3) Buscá estos dos archivos:
+   - CLIENTES.BAK
+   - CLIENTES.TBK
+4) Enviá esos dos archivos al soporte técnico de Husky Software para intentar su reparación.
+
+Importante:
+No reemplaces archivos, no restaures DATOS.ZIP y no borres nada si no estás seguro.
+
+En este caso no corresponde recuperar PARAM.MEM, CONFIG.MEM ni RECE.MEM. Eso es para errores de archivos de memoria, y este no es ese caso.`,
 
   borrarRecibo: `Hola 😊 Sí, se puede revisar el recibo, pero hay que hacerlo con cuidado.
 
@@ -87,6 +105,11 @@ Con eso puedo orientarte mejor sin hacerte tocar cosas que no corresponden.`
 
 const rules = [
   {
+    id: 'ver-stru-fe-linea-136',
+    answer: answers.linea136,
+    match: q => hasAny(q, ['linea 136', 'línea 136', 'line 136']) || (q.includes('136') && hasAny(q, ['ver_stru_fe', 'ver stru fe', 'ver-stru-fe']))
+  },
+  {
     id: 'ver-stru-fe',
     answer: answers.verStruFe,
     match: q => hasAny(q, ['ver_stru_fe', 'ver stru fe', 'ver-stru-fe'])
@@ -104,14 +127,16 @@ const rules = [
 ];
 
 function findDeterministicTopRuleAnswer(input) {
-  const gptMaster = findGptMasterAnswer(input);
-  if (gptMaster) return { id: gptMaster.id, answer: gptMaster.answer, title: gptMaster.title, score: gptMaster.score };
-
   const q = normalize(input);
   if (!q) return null;
+
   for (const rule of rules) {
     if (rule.match(q)) return { id: rule.id, answer: rule.answer };
   }
+
+  const gptMaster = findGptMasterAnswer(input);
+  if (gptMaster) return { id: gptMaster.id, answer: gptMaster.answer, title: gptMaster.title, score: gptMaster.score };
+
   return null;
 }
 
