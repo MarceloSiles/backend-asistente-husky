@@ -10,6 +10,7 @@ const { loadKnowledgeChunks, searchKnowledge, formatKnowledgeContext } = require
 const { findCriticalRuleAnswer } = require('./criticalRules');
 const { findAdditionalRuleAnswer } = require('./additionalCriticalRules');
 const { findDeterministicRuleAnswer } = require('./deterministicRules');
+const { findDeterministicTopRuleAnswer } = require('./deterministicTopRules');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -49,6 +50,9 @@ function hasOpenAIKey() {
 }
 
 function findRuleAnswer(question) {
+  const top = findDeterministicTopRuleAnswer(question);
+  if (top) return { ...top, family: 'top-rule' };
+
   const deterministic = findDeterministicRuleAnswer(question);
   if (deterministic) return { ...deterministic, family: 'deterministic-rule' };
 
@@ -62,7 +66,17 @@ function findRuleAnswer(question) {
 }
 
 function getSystemPrompt() {
-  return `Sos el asistente técnico de Husky Software. Respondé en español argentino, con tono claro, amable y práctico. Ayudás a usuarios finales de Husky Gestión Comercial. No inventes funciones.
+  return `Sos el asistente técnico de Husky Software. Respondé en español argentino, con tono muy amable, simple y paso a paso. Ayudás a usuarios finales con pocos conocimientos técnicos. No inventes funciones.
+
+Reglas de estilo obligatorias:
+- Usá lenguaje coloquial, claro y tranquilo.
+- Evitá tecnicismos innecesarios.
+- Usá frases cortas.
+- Cuando haya pasos, numeralos.
+- Podés usar emojis moderados como 😊 o ⚠️.
+- Primero explicá qué significa el problema en palabras simples.
+- Después indicá qué hacer, paso a paso.
+- No des muchas alternativas juntas si pueden confundir al usuario.
 
 Reglas de prioridad:
 1) Si la base de conocimiento contiene una regla, disparador, prioridad absoluta o respuesta obligatoria relacionada con la consulta, obedecela exactamente y no la mezcles con otros casos.
@@ -131,7 +145,7 @@ async function askOpenAIVision(question, image) {
   const model = process.env.OPENAI_VISION_MODEL || process.env.OPENAI_MODEL || 'gpt-4o-mini';
   if (!apiKey) return null;
 
-  const userText = question || 'Analizá esta captura relacionada con Husky Gestión Comercial. Primero identificá el mensaje visible. Si reconocés un error ya documentado, nombralo exactamente, por ejemplo: duplicidad en la numeración, factura no electrónica, archivo de memoria, REINDEXA, no es una tabla, certificado expirado, PDF o Gmail.';
+  const userText = question || 'Analizá esta captura relacionada con Husky Gestión Comercial. Primero identificá el mensaje visible. Si reconocés un error ya documentado, nombralo exactamente, por ejemplo: duplicidad en la numeración, factura no electrónica, archivo de memoria, REINDEXA, no es una tabla, certificado expirado, PDF, Gmail o stock insuficiente.';
   const knowledge = buildKnowledgeSystemMessage(userText);
   const base64Image = fs.readFileSync(image.path, 'base64');
   const dataUrl = `data:${image.mimetype};base64,${base64Image}`;
@@ -196,7 +210,7 @@ async function buildAnswer(question, req) {
   }
 
   if (!answer) {
-    answer = `Hola, soy el asistente de Husky Software. No encontré una respuesta exacta para esa consulta, pero puedo orientarte. Necesito que me detalles un poco más lo que ocurre: mensaje exacto, pantalla o proceso. Si podés, subí una imagen con la pantalla del problema.`;
+    answer = `Hola 😊 No encontré una respuesta exacta para esa consulta, pero te puedo orientar.\n\nPara ayudarte bien, necesito que me digas:\n\n1) Qué pantalla estás usando.\n2) Qué mensaje exacto aparece.\n3) Si podés, subí una captura de pantalla.\n\nCon eso te guío paso a paso.`;
   }
 
   saveLog({
