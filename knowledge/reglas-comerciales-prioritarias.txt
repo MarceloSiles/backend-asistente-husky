@@ -1,0 +1,95 @@
+REGLA PRIORITARIA: BORRAR FACTURA ELECTRONICA
+
+Disparadores: borrar factura electronica, borrar factura electrónica, eliminar factura electronica, eliminar factura electrónica, anular factura electronica, anular factura electrónica, borrar factura con CAE.
+
+Respuesta al usuario:
+
+No se puede borrar una factura electrónica que ya tiene CAE como si nunca hubiera existido.
+
+Si el comprobante ya fue autorizado por AFIP/ARCA, la forma correcta de anular su efecto es hacer una Nota de Crédito Electrónica.
+
+Qué hacer:
+1) No intentes borrar la factura para hacerla desaparecer.
+2) Hacé una Nota de Crédito Electrónica por el importe correspondiente.
+3) Esa nota puede aplicarse o no en cuenta corriente, según el caso.
+4) Si no estás seguro, conviene que lo revise soporte de Husky antes de tocar cuenta corriente o stock.
+
+REGLA PRIORITARIA: CARGAR PEDIDOS
+
+Disparadores: cargar pedidos, hacer pedidos, pedido de cliente, pedidos de clientes, convertir pedido en factura, se pueden cargar pedidos.
+
+Respuesta al usuario:
+
+Sí, en Husky se pueden cargar pedidos de clientes.
+
+El pedido sirve para dejar registrada una solicitud del cliente antes de facturar.
+
+Después, ese pedido puede convertirse en factura.
+
+Importante:
+El stock no se descuenta al cargar el pedido. El stock se descuenta recién cuando se hace la factura.
+
+REGLA PRIORITARIA: AGREGAR ARTICULO
+
+Disparadores: agregar articulo, agregar artículo, cargar articulo nuevo, cargar artículo nuevo, alta de articulo, alta de artículo, nuevo articulo, nuevo artículo.
+
+Respuesta al usuario:
+
+Te guío paso a paso 😊
+
+Para agregar un artículo nuevo:
+1) Entrá al módulo de Artículos.
+2) Ingresá al maestro de artículos.
+3) Tocá Nuevo.
+4) Completá los datos principales: código, descripción, precio, IVA, rubro y demás datos necesarios.
+5) Guardá el artículo.
+6) Después ya lo vas a poder usar al facturar, comprar o consultar stock.
+
+Si el artículo no aparece al facturar, revisá que se haya guardado correctamente y que no esté cargado con un código distinto.
+
+REGLA PRIORITARIA: RETENCIONES PERCEPCIONES IMPUESTOS INTERNOS
+
+Disparadores: retenciones, percepciones, impuestos internos, IIBB, ganancias, retencion en orden de pago, percepción en ventas.
+
+Respuesta al usuario:
+
+Te lo resumo fácil:
+
+Husky no calcula automáticamente percepciones ni retenciones.
+
+Compras:
+Si cargás una factura de compra que trae percepciones, el sistema permite informarlas para que salgan en IVA Compras.
+
+Órdenes de pago a proveedores:
+Husky no calcula retenciones automáticamente. Si corresponde informar una retención, el importe debe calcularse manualmente e ingresarse en la orden de pago usando la opción Retenciones.
+
+Ventas:
+Husky no calcula percepciones en facturas de venta.
+
+Recibos:
+Si un cliente paga aplicando una retención, ese importe debe informarse en el recibo usando la opción Retenciones.
+
+Impuestos internos:
+El sistema no está preparado para procesar impuestos internos en facturas de venta.
+
+REGLA PRIORITARIA: REMITOS PREIMPRESOS
+
+Disparadores: remito, remitos, imprimir remito, encabezado del remito, remito preimpreso, CAI del remito, codigo de barras del remito.
+
+Respuesta al usuario:
+
+Los remitos deben ser prenumerados y preimpresos por una imprenta.
+
+El formulario preimpreso debe incluir:
+- número de remito,
+- datos fiscales,
+- CUIT,
+- ingresos brutos,
+- fecha de inicio de actividades,
+- CAI,
+- fecha de vencimiento,
+- código de barras.
+
+Por eso Husky no imprime el encabezado completo del remito. El sistema imprime los datos variables sobre el formulario preimpreso.
+
+La imprenta debe respetar el formato que usa Husky para que todo coincida correctamente.
