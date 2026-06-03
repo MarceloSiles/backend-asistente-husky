@@ -1,3 +1,5 @@
+const { findGptMasterAnswer } = require('./gptMasterRules');
+
 function normalize(text) {
   return String(text || '')
     .toLowerCase()
@@ -102,6 +104,9 @@ const rules = [
 ];
 
 function findDeterministicTopRuleAnswer(input) {
+  const gptMaster = findGptMasterAnswer(input);
+  if (gptMaster) return { id: gptMaster.id, answer: gptMaster.answer, title: gptMaster.title, score: gptMaster.score };
+
   const q = normalize(input);
   if (!q) return null;
   for (const rule of rules) {
