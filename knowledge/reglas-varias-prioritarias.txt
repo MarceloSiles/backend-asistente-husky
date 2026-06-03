@@ -1,0 +1,79 @@
+REGLA PRIORITARIA: TICKET AFIP FECHA HORA ZONA HORARIA
+
+Disparadores: tiempo de expiracion inferior, tiempo de expiración inferior, generationtime, generation time, ticket expira, zona horaria, hora incorrecta AFIP.
+
+Respuesta al usuario:
+
+Ese error no está relacionado con el vencimiento del certificado.
+
+Indica que Windows tiene mal configurada la fecha, la hora o la zona horaria. AFIP/ARCA rechaza el ticket porque la PC trabaja con una hora incorrecta.
+
+Solución:
+1) En la PC donde aparece el error, corregí Fecha y hora de Windows.
+2) Verificá la zona horaria: debe ser UTC-03:00 Ciudad de Buenos Aires.
+3) Confirmá que la hora sea correcta.
+4) Si aparece horario de verano, desactivalo.
+5) Cerrá Husky y volvé a abrirlo.
+6) Intentá solicitar el CAE nuevamente.
+
+REGLA PRIORITARIA: ARCHIVO DE RECURSOS NO VALIDO
+
+Disparadores: archivo de recursos no es valido, archivo de recursos no es válido, archivo de recursos invalido, archivo de recursos inválido, sobrescribirlo con uno vacio, sobrescribirlo con uno vacío.
+
+Respuesta al usuario:
+
+Ese aviso no es grave y no afecta los datos.
+
+Da igual si respondés Sí o No: el resultado práctico es el mismo.
+
+Lo importante es revisar permisos de Windows o de red.
+
+Qué hacer:
+1) Pedí ayuda a un técnico en PC o redes.
+2) Verificá que la carpeta del sistema Husky en el servidor esté compartida para todos los usuarios.
+3) Verificá permisos de lectura y escritura sobre esa carpeta y subcarpetas.
+4) Volvé a abrir Husky.
+
+Con permisos correctos, el aviso debería dejar de aparecer.
+
+REGLA PRIORITARIA: ARCHIVOS RAROS DUPLICADOS EN CARPETA
+
+Disparadores: archivo raro, archivos raros, CLIENTES(1).DBF, CLIENTES (1).DBF, FAMILIAS (2).FPT, archivos con parentesis, archivos con paréntesis.
+
+Respuesta al usuario:
+
+Ese archivo no pertenece al sistema Husky con ese nombre.
+
+Los archivos con paréntesis, espacios o números agregados suelen ser copias duplicadas o archivos movidos accidentalmente dentro de la carpeta del sistema.
+
+Qué hacer:
+1) Cerrá Husky en todas las PCs.
+2) Entrá a la carpeta del sistema en el servidor.
+3) Borrá solo los archivos raros, por ejemplo CLIENTES(1).DBF, FAMILIAS (2).FPT o similares.
+4) No borres los archivos originales sin paréntesis ni caracteres extraños.
+5) Volvé a abrir Husky y probá nuevamente.
+
+No corresponde reindexar ni restaurar backups por este caso, salvo que el error continúe después de borrar esos duplicados.
+
+REGLA PRIORITARIA: FACTURA EN DOLARES
+
+Disparadores: facturar en dolares, facturar en dólares, factura en dolares, factura en dólares, tipo de cambio, cancela en dolares, cancela en dólares.
+
+Respuesta al usuario:
+
+Para emitir una factura electrónica en dólares, la factura se carga normalmente en pesos.
+
+La moneda no se elige al principio.
+
+Procedimiento:
+1) Cargá la factura como cualquier otra, con artículos e importes en pesos.
+2) Avanzá hasta la pantalla final de Solicitar CAE.
+3) Ahí seleccioná la moneda: Dólares.
+4) Husky propone el tipo de cambio vendedor del Banco Nación del día hábil anterior.
+5) En ese momento Husky convierte los importes de pesos a dólares y envía el comprobante a AFIP/ARCA.
+
+Sobre “Cancela en dólares”:
+- Si NO se marca: la factura está expresada en dólares pero se cobrará en pesos. Si cambia el tipo de cambio entre facturación y cobro, corresponde ajustar con Nota de Débito o Nota de Crédito por diferencia de cambio.
+- Si SE marca: se informa que el comprobante se cancelará en dólares. En ese caso no hay diferencias de cambio ni necesidad de ND/NC por ajuste.
+
+La conversión a dólares se hace únicamente al solicitar el CAE.
