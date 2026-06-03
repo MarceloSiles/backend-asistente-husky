@@ -1,0 +1,113 @@
+REGLA PRIORITARIA: ACTUALIZAR HUSKY A NUEVA VERSION
+
+Disparadores: actualizar Husky, actualizar el sistema, nueva version, nueva versión, instalar nueva version, migrar a la ultima version, migrar a la última versión.
+
+Respuesta al usuario:
+
+Actualizar Husky no es simplemente copiar un archivo.
+
+La actualización implica instalar una nueva versión completa del sistema, que hereda los datos de la versión anterior y conserva la información existente.
+
+Importante:
+- La actualización tiene costo.
+- Debe coordinarse con el soporte técnico de Husky Software.
+- No conviene hacerla sin asistencia, porque puede afectar archivos, configuración o bases de datos.
+
+Qué hacer:
+1) Contactá al soporte de Husky Software.
+2) Indicá qué versión estás usando actualmente.
+3) Coordiná día y horario para la actualización.
+4) Antes de actualizar, verificá que exista un backup reciente.
+
+REGLA PRIORITARIA: REQUISITOS WINDOWS HUSKY
+
+Disparadores: requisitos de Windows, Windows 7, Windows 10, Windows 11, Windows Server, terminales, escritorio remoto, multiusuario, servidor.
+
+Respuesta al usuario:
+
+Husky Gestión Comercial requiere Windows 10 o superior.
+
+Para uso multiusuario, lo recomendado es trabajar con un servidor con Windows Server 2016 o superior.
+
+Las terminales acceden al sistema mediante Escritorio Remoto.
+
+Importante:
+La configuración de servidor, red, impresoras y acceso remoto debe hacerla un técnico en PC con conocimientos en redes. Eso no forma parte del soporte directo de Husky Software.
+
+REGLA PRIORITARIA: PDF CREATOR MICROSOFT PRINT TO PDF
+
+Disparadores: PDF Creator, no genera PDF, error PDF, generar PDF, Microsoft Print to PDF, imprimir PDF, reinstalar PDF Creator.
+
+Respuesta al usuario:
+
+Vamos paso a paso 😊
+
+Para problemas al generar PDF, primero hay que saber qué versión de Husky estás usando.
+
+Si usás Husky versión 35 o anterior:
+El sistema usa PDF Creator. En ese caso corresponde reinstalar y configurar PDF Creator.
+
+Link de descarga:
+https://www.mcsiles.com.ar/app/PDFCreator-1_2_3_setup.rar
+
+Pasos básicos:
+1) Cerrá Husky.
+2) Entrá en Panel de Control / Programas / Desinstalar un programa.
+3) Si hay una versión de PDF Creator instalada, desinstalala.
+4) Si pregunta si querés borrar preferencias o ajustes, respondé que sí.
+5) Descargá PDF Creator desde el link indicado.
+6) Instalalo.
+7) Abrí PDF Creator.
+8) Entrá en Impresora / Opciones.
+9) En Ajustes generales 2, configurá Comprobar actualizaciones en Nunca.
+10) En AutoGuardado, activá AutoGuardado y elegí formato PDF.
+11) Guardá y probá nuevamente desde Husky.
+
+Si usás Husky versión 36 o superior:
+Ya no se usa PDF Creator como solución principal. Se usa la impresora nativa de Windows llamada Microsoft Print to PDF.
+
+En ese caso:
+1) Revisá que Windows 10 o superior tenga activa la impresora Microsoft Print to PDF.
+2) Si no aparece, debe activarla o repararla un técnico en PC.
+3) Luego probá nuevamente desde Husky.
+
+REGLA PRIORITARIA: DLL FACTURA ELECTRONICA WSAFIPFE
+
+Disparadores: DLL factura electronica no compatible, DLL factura electrónica no compatible, WSAFIPFE, WAFIPFE, componente factura electronica, componente factura electrónica, instalar WSAFIPFE.
+
+Respuesta al usuario:
+
+Ese mensaje indica que el componente de facturación electrónica está desactualizado o mal instalado.
+
+La versión correcta es WSAFIPFE10081.
+
+Link de descarga:
+https://www.mcsiles.com.ar/app/WSAFIPFE10081.zip
+
+Qué hacer:
+1) Cerrá Husky en todas las PCs.
+2) En Windows, entrá a Panel de Control / Programas / Desinstalar un programa.
+3) Buscá todas las versiones de WSAFIPFE.
+4) Desinstalalas todas. A veces puede haber más de una.
+5) Descargá WSAFIPFE10081 desde el link indicado.
+6) Abrí el ZIP descargado.
+7) Ejecutá Setup.exe.
+8) Cuando termine, abrí Husky y probá pedir el CAE nuevamente.
+
+Importante:
+Esto no es un problema de internet ni de AFIP/ARCA. Es una actualización del componente de facturación electrónica.
+
+REGLA PRIORITARIA: INSTALACION MULTIUSUARIO TERMINALES
+
+Disparadores: instalar en varias pc, instalar en varias PCs, terminales, puesto de trabajo, varias sucursales, servidor MySQL, red, acceso remoto.
+
+Respuesta al usuario:
+
+Para usar Husky en varias PCs, debe haber una instalación central y terminales que accedan correctamente al sistema.
+
+La configuración de red, servidor, Escritorio Remoto, impresoras y accesos debe hacerla un técnico en PC.
+
+Husky puede orientar sobre el uso del sistema, pero la parte de red, permisos, Windows, impresoras y conexión entre equipos no forma parte del soporte directo del programa.
+
+Recomendación:
+Antes de instalar o mover el sistema a otra PC, verificá que haya backup actualizado y que lo revise un técnico.
