@@ -1,0 +1,76 @@
+REGLA PRIORITARIA: CONFIGURAR CORREO YAHOO
+
+Disparadores: Yahoo, correo Yahoo, mail Yahoo, smtp.mail.yahoo.com, configurar Yahoo.
+
+Respuesta al usuario:
+
+Para usar Yahoo en Husky necesitás una contraseña especial para aplicaciones. La contraseña normal de Yahoo no sirve para esto.
+
+Pasos en Yahoo:
+1) Entrá a tu cuenta de Yahoo.
+2) Andá a Seguridad de la cuenta.
+3) Buscá Generar contraseñas para aplicaciones.
+4) Elegí Empecemos.
+5) Cuando pregunte el nombre de la aplicación, escribí Husky.
+6) Tocá Generar contraseña.
+7) Copiá esa contraseña.
+8) Entrá a Husky y usá esa contraseña en la configuración del correo.
+
+Datos para cargar en Husky:
+- Servidor SMTP: smtp.mail.yahoo.com
+- Puerto: 465
+- SSL: activado
+- El servidor requiere autenticación: activado
+- Contraseña: la que generó Yahoo, no la contraseña común.
+
+Si con eso no envía, probablemente lo esté bloqueando el antivirus, firewall o red. En ese caso conviene que lo revise un técnico en PC.
+
+REGLA PRIORITARIA: TMUSB64 INTEGRIDAD DE MEMORIA
+
+Disparadores: TMUSB64, no se puede cargar un controlador, integridad de memoria, aislamiento del nucleo, aislamiento del núcleo.
+
+Respuesta al usuario:
+
+Ese mensaje lo muestra Windows, no Husky.
+
+Generalmente aparece porque Windows bloquea el controlador TMUSB64.sys, que suele ser de una impresora térmica o dispositivo de punto de venta.
+
+La causa más común es una protección de Windows llamada Integridad de memoria.
+
+Hacé esto:
+1) En Windows, tocá Inicio.
+2) Escribí Aislamiento del núcleo.
+3) Abrí esa opción.
+4) Buscá Integridad de memoria.
+5) Cambiala a Desactivado.
+6) Reiniciá la PC.
+
+Después probá nuevamente la impresora.
+
+Si sigue sin funcionar, reinstalá el driver oficial de la impresora.
+
+Importante: si el usuario no está seguro, mejor que lo haga un técnico en PC, porque desactivar Integridad de memoria reduce una protección de Windows.
+
+REGLA PRIORITARIA: TICKET FACTURA COMANDERA
+
+Disparadores: ticket factura, ticket-factura, factura electronica como ticket, factura electrónica como ticket, comandera, termica, térmica, 80 mm, 8 cm.
+
+Respuesta al usuario:
+
+Sí, se puede 😊
+
+Husky permite imprimir una factura electrónica como ticket de 8 cm usando una comandera térmica.
+
+No hace falta una impresora fiscal Epson para este caso.
+
+Hay dos cosas distintas:
+
+1) Ticket fiscal
+Ese usa una impresora fiscal Epson o Hasar.
+
+2) Ticket-factura electrónico
+Es una factura electrónica normal, con CAE y QR, pero impresa en formato ticket angosto de 8 cm usando una comandera térmica.
+
+Si sale en A4 y querías ticket, o sale ticket y querías A4, hay que revisar la configuración de impresión del puesto.
+
+Si la comandera no imprime, no aparece en Windows o corta mal el papel, eso lo debe revisar un técnico en PC o impresoras.
