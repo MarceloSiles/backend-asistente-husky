@@ -9,6 +9,7 @@ const RULE_FILES = [
   'reglas-impresion-reproceso.txt',
   'reglas-afip-conectividad.txt',
   'reglas-varias-prioritarias.txt',
+  'reglas-comerciales-prioritarias.txt',
   'instrucciones-gpt-prioridad.txt',
   'certificado-expirado-prioritario.txt',
   'estilo-respuestas-usuarios-basicos.txt'
@@ -67,7 +68,11 @@ function scoreSection(query, section) {
     'fallo al intentar obtener el ticket', 'fallo al obtener ticket', 'falló al intentar obtener el ticket',
     'error en token', 'wsaa', 'error inesperado de recepcion', 'se ha terminado la conexion',
     'tiempo de expiracion inferior', 'generationtime', 'zona horaria', 'archivo de recursos',
-    'archivo raro', 'archivos raros', 'facturar en dolares', 'facturar en dólares', 'tipo de cambio'
+    'archivo raro', 'archivos raros', 'facturar en dolares', 'facturar en dólares', 'tipo de cambio',
+    'borrar factura electronica', 'borrar factura electrónica', 'eliminar factura electronica',
+    'cargar pedidos', 'pedido de cliente', 'convertir pedido en factura', 'agregar articulo',
+    'agregar artículo', 'cargar articulo nuevo', 'cargar artículo nuevo', 'retenciones',
+    'percepciones', 'impuestos internos', 'remito preimpreso', 'cai del remito'
   ];
 
   for (const phrase of strong) {
