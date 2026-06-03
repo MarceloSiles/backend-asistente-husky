@@ -1,11 +1,11 @@
 const fs = require('fs');
 const path = require('path');
-const { findDeterministicErrorCodeRuleAnswer } = require('./deterministicErrorCodeRules');
 
 const KNOWLEDGE_DIR = path.join(__dirname, 'knowledge');
 const RULE_FILES = [
   'regla-archivos-mem-prioridad.txt',
   'reglas-prioritarias-nuevas.txt',
+  'reglas-codigos-afip.txt',
   'reglas-impresion-reproceso.txt',
   'reglas-afip-conectividad.txt',
   'reglas-varias-prioritarias.txt',
@@ -79,7 +79,8 @@ function scoreSection(query, section) {
     'aislamiento del núcleo', 'ticket factura', 'ticket-factura', 'comandera', '80 mm', '8 cm',
     'actualizar husky', 'nueva version', 'nueva versión', 'windows 10', 'windows server',
     'pdf creator', 'microsoft print to pdf', 'wsafipfe', 'wafipfe', 'dll factura electronica',
-    'dll factura electrónica', 'instalar en varias pc', 'terminales', 'multiusuario'
+    'dll factura electrónica', 'instalar en varias pc', 'terminales', 'multiusuario',
+    '10242', '10243', 'condicion iva receptor', 'condición iva receptor'
   ];
 
   for (const phrase of strong) {
@@ -104,9 +105,6 @@ function cleanAnswer(section) {
 }
 
 function findTextRuleAnswer(query) {
-  const codeRule = findDeterministicErrorCodeRuleAnswer(query);
-  if (codeRule) return { id: codeRule.id, file: 'deterministicErrorCodeRules.js', answer: codeRule.answer };
-
   const sections = loadRuleSections();
   const scored = sections
     .map(section => ({ ...section, score: scoreSection(query, section) }))
