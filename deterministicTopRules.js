@@ -12,6 +12,25 @@ function hasAny(q, words) {
 }
 
 const answers = {
+  verStruFe: `Hola 😊 Ese error corresponde a una verificación interna de archivos del sistema.
+
+Si el mensaje dice VER_STRU_FE, lo más importante es no seguir probando cosas al azar.
+
+En muchos casos, cuando aparece relacionado con líneas como 136, 90, 91, 92 o 93, el problema puede estar vinculado al archivo de clientes.
+
+Qué hacer:
+
+1) Cerrá Husky en todas las PCs.
+2) Sacá una captura del error completo, si podés.
+3) Anotá si el mensaje muestra un número de línea.
+4) Si menciona línea 136, 90, 91, 92 o 93, enviá al soporte de Husky los archivos CLIENTES.BAK y CLIENTES.TBK.
+5) No restaures backups ni borres archivos si no estás seguro.
+
+Importante:
+No es un caso de condición de IVA ni de error 10242. No corresponde actualizar por ese mensaje sin revisar antes el error exacto.
+
+Si me copiás el mensaje completo, especialmente el número de línea, te puedo guiar con más precisión.`,
+
   borrarRecibo: `Hola 😊 Sí, se puede revisar el recibo, pero hay que hacerlo con cuidado.
 
 Primero te aclaro algo importante: un recibo no es lo mismo que una factura electrónica.
@@ -65,6 +84,11 @@ Con eso puedo orientarte mejor sin hacerte tocar cosas que no corresponden.`
 };
 
 const rules = [
+  {
+    id: 'ver-stru-fe',
+    answer: answers.verStruFe,
+    match: q => hasAny(q, ['ver_stru_fe', 'ver stru fe', 'ver-stru-fe'])
+  },
   {
     id: 'borrar-recibo',
     answer: answers.borrarRecibo,
