@@ -5,6 +5,21 @@
   var script = document.currentScript;
   var backendUrl = (script && script.getAttribute('data-backend')) || window.HUSKY_BACKEND_URL || 'https://backend-asistente-husky.onrender.com';
 
+  function getSessionId() {
+    try {
+      var key = 'husky_assistant_session_id';
+      var existing = window.localStorage && window.localStorage.getItem(key);
+      if (existing) return existing;
+      var id = 'husky-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+      if (window.localStorage) window.localStorage.setItem(key, id);
+      return id;
+    } catch (e) {
+      return 'husky-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+    }
+  }
+
+  var sessionId = getSessionId();
+
   function el(tag, attrs, text) {
     var node = document.createElement(tag);
     Object.keys(attrs || {}).forEach(function (key) {
@@ -16,9 +31,25 @@
     return node;
   }
 
+  function looksLikeHugeEncodedText(text) {
+    var value = String(text || '').trim();
+    if (!value) return false;
+    if (value.indexOf('data:image/') === 0) return true;
+    if (value.length > 1500 && /^[A-Za-z0-9+/=\s]+$/.test(value.slice(0, 1500))) return true;
+    return false;
+  }
+
+  function safeDisplayText(text, fallback) {
+    var value = String(text || '').trim();
+    if (!value) return fallback || '';
+    if (looksLikeHugeEncodedText(value)) return fallback || 'Imagen adjunta';
+    if (value.length > 1200) return value.slice(0, 1200) + '\n\n[Texto demasiado largo recortado]';
+    return value;
+  }
+
   function renderMessageText(node, text) {
     node.textContent = '';
-    var value = String(text || '');
+    var value = safeDisplayText(text, 'Imagen adjunta');
     var urlRegex = /(https?:\/\/[^\s]+)/g;
     var lastIndex = 0;
     var match;
@@ -58,6 +89,14 @@
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   }
 
+  function isAllowedImage(file) {
+    if (!file) return false;
+    if (file.type && file.type.indexOf('image/') === 0) return true;
+    // Algunos navegadores Android no informan bien el MIME. En ese caso miramos la extensión.
+    var name = String(file.name || '').toLowerCase();
+    return /\.(jpg|jpeg|png|webp|gif|heic|heif)$/i.test(name);
+  }
+
   function init() {
     var selectedImage = null;
     var selectedImagePreviewUrl = null;
@@ -83,7 +122,7 @@
 
     var form = el('form', { class: 'husky-form', autocomplete: 'off' });
     var attach = el('button', { id: 'husky-attach', type: 'button', title: 'Adjuntar imagen' }, '📎');
-    var fileInput = el('input', { id: 'husky-file-input', type: 'file', accept: 'image/png,image/jpeg,image/webp,image/gif', style: 'display:none' });
+    var fileInput = el('input', { id: 'husky-file-input', type: 'file', accept: 'image/*', style: 'display:none' });
     var inputWrap = el('div', { class: 'husky-input-wrap' });
     var input = el('input', { id: 'husky-input', type: 'text', placeholder: 'Escribí tu consulta...', autocomplete: 'off' });
     var attachmentInfo = el('div', { id: 'husky-attachment-info' });
@@ -111,6 +150,8 @@
 
     function resetChat() {
       requestCounter += 1;
+      sessionId = 'husky-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+      try { window.localStorage.setItem('husky_assistant_session_id', sessionId); } catch (e) {}
       if (currentAbortController) {
         try { currentAbortController.abort(); } catch (e) {}
       }
@@ -143,9 +184,9 @@
     fileInput.addEventListener('change', function () {
       var file = fileInput.files && fileInput.files[0];
       if (!file) return;
-      if (!file.type || !file.type.startsWith('image/')) {
+      if (!isAllowedImage(file)) {
         clearAttachment();
-        attachmentInfo.textContent = 'El archivo seleccionado no es una imagen.';
+        attachmentInfo.textContent = 'El archivo seleccionado no parece ser una imagen. Probá con una captura JPG, PNG o WEBP.';
         return;
       }
       if (file.size > 8 * 1024 * 1024) {
@@ -158,7 +199,7 @@
       selectedImagePreviewUrl = URL.createObjectURL(file);
       attachmentInfo.innerHTML = '';
       var chip = el('div', { class: 'husky-attachment-chip' });
-      chip.appendChild(el('span', {}, '📷 ' + file.name + ' · ' + formatFileSize(file.size)));
+      chip.appendChild(el('span', {}, '📷 ' + (file.name || 'imagen') + ' · ' + formatFileSize(file.size)));
       var remove = el('button', { type: 'button', class: 'husky-remove-attachment', title: 'Quitar imagen' }, '×');
       remove.addEventListener('click', clearAttachment);
       chip.appendChild(remove);
@@ -168,6 +209,9 @@
     form.addEventListener('submit', function (event) {
       event.preventDefault();
       var text = input.value.trim();
+      if (looksLikeHugeEncodedText(text)) {
+        text = '';
+      }
       if (!text && !selectedImage) return;
 
       var thisRequest = ++requestCounter;
@@ -178,7 +222,7 @@
 
       var imageToSend = selectedImage;
       var previewUrlToShow = selectedImagePreviewUrl;
-      var displayText = text || 'Imagen adjunta';
+      var displayText = imageToSend ? (text || 'Imagen adjunta') : safeDisplayText(text, 'Consulta enviada');
       addMessage(messages, displayText, 'user');
 
       if (imageToSend && previewUrlToShow) {
@@ -201,9 +245,10 @@
 
       if (imageToSend) {
         var formData = new FormData();
-        formData.append('image', imageToSend);
+        formData.append('image', imageToSend, imageToSend.name || 'imagen.jpg');
         formData.append('message', text);
         formData.append('request_id', String(thisRequest));
+        formData.append('sessionId', sessionId);
 
         fetch(backendUrl + '/chat-image', { method: 'POST', body: formData, signal: currentAbortController.signal, cache: 'no-store' })
           .then(function (response) {
@@ -214,7 +259,7 @@
             if (!ignoreOldResponse()) setMessageText(thinking, data.answer || 'Imagen recibida correctamente.');
           })
           .catch(function (error) {
-            if (!ignoreOldResponse() && error.name !== 'AbortError') setMessageText(thinking, 'No pude enviar la imagen al backend. Probá con una imagen JPG, PNG o WEBP de menos de 8 MB.');
+            if (!ignoreOldResponse() && error.name !== 'AbortError') setMessageText(thinking, 'No pude enviar la imagen al backend. Probá con una captura JPG, PNG o WEBP de menos de 8 MB.');
           })
           .finally(function () {
             if (!ignoreOldResponse()) {
@@ -228,7 +273,7 @@
       fetch(backendUrl + '/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
-        body: JSON.stringify({ message: text, request_id: String(thisRequest) }),
+        body: JSON.stringify({ message: text, request_id: String(thisRequest), sessionId: sessionId }),
         signal: currentAbortController.signal,
         cache: 'no-store'
       })
