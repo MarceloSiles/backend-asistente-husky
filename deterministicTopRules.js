@@ -37,7 +37,7 @@ Si me copiás el número de línea, te puedo orientar mejor.`,
 
 No conviene seguir probando cosas al azar, porque se puede empeorar el problema.
 
-Hacé esto:
+Primero, lo más seguro:
 
 1) Cerrá Husky en todas las PCs.
 2) Entrá a la carpeta donde está instalado el sistema.
@@ -46,10 +46,23 @@ Hacé esto:
    - CLIENTES.TBK
 4) Enviá esos dos archivos al soporte técnico de Husky Software para intentar su reparación.
 
-Importante:
-No reemplaces archivos, no restaures DATOS.ZIP y no borres nada si no estás seguro.
+Si es una urgencia y necesitás intentar una recuperación manual:
 
-En este caso no corresponde recuperar PARAM.MEM, CONFIG.MEM ni RECE.MEM. Eso es para errores de archivos de memoria, y este no es ese caso.`,
+1) Verificá que los archivos CLIENTES.BAK y CLIENTES.TBK sean recientes, idealmente del día anterior o, como máximo, de 1 día de antigüedad.
+2) Cerrá Husky en todas las PCs.
+3) En la carpeta del sistema, localizá los archivos dañados:
+   - CLIENTES.DBF
+   - CLIENTES.FPT
+4) Antes de renombrar los backups, quitá esos archivos dañados de la carpeta o cambiales el nombre, por ejemplo:
+   - CLIENTES_DAÑADO.DBF
+   - CLIENTES_DAÑADO.FPT
+5) Renombrá:
+   - CLIENTES.BAK como CLIENTES.DBF
+   - CLIENTES.TBK como CLIENTES.FPT
+6) Abrí Husky y probá nuevamente.
+
+Importante:
+Esta alternativa manual solo conviene usarla si el backup está actualizado. Si tenés dudas, es mejor enviar los archivos al soporte de Husky antes de tocar nada.`,
 
   borrarRecibo: `Hola 😊 Sí, se puede revisar el recibo, pero hay que hacerlo con cuidado.
 
