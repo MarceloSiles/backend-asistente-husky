@@ -20,7 +20,7 @@ function normalize(text) {
 
 function tokens(text) {
   const stop = new Set([
-    'que','con','para','por','una','uno','del','los','las','como','cuando','donde','este','esta','esto','hay','sin','pero','sistema','husky','software','me','mi','al','el','la','lo','un','de','en','y','o','error','aparece','mensaje','consulta','quiero','puedo','hacer'
+    'que','con','para','por','una','uno','del','los','las','como','cuando','donde','este','esta','esto','hay','sin','pero','sistema','husky','software','me','mi','al','el','la','lo','un','de','en','y','o','error','aparece','mensaje','consulta','quiero','puedo','hacer','dice','sale','como','algo'
   ]);
   return normalize(text).split(' ').filter(w => w.length >= 3 && !stop.has(w));
 }
@@ -62,13 +62,13 @@ function loadMasterText() {
 
 function splitBlocks(text) {
   const clean = String(text || '').replace(/\r\n/g, '\n');
-  const markers = /\n(?=(===== GPT_SOURCE_FILE:|## NOTA PARA EL MODELO|# NOTA PARA EL MODELO|NOTA PARA EL MODELO|NOTAS PARA EL MODELO|## NOTAS PARA EL MODELO|TEMA:|# Tema:|Tema:|DISPARADOR:|DISPARADORES:|RESPUESTA OBLIGATORIA|PRIORIDAD ABSOLUTA|INTERCEPCIÓN PRIORITARIA|INTERCEPCION PRIORITARIA|CONSULTA:|\*\*Consulta:\*\*|### ))/i;
+  const markers = /\n(?=(?:===== GPT_SOURCE_FILE:|## NOTA PARA EL MODELO|# NOTA PARA EL MODELO|NOTA PARA EL MODELO|NOTAS PARA EL MODELO|## NOTAS PARA EL MODELO|TEMA:|# Tema:|Tema:|DISPARADOR:|DISPARADORES:|RESPUESTA OBLIGATORIA|PRIORIDAD ABSOLUTA|INTERCEPCIÓN PRIORITARIA|INTERCEPCION PRIORITARIA|CONSULTA:|\*\*Consulta:\*\*|### ))/i;
   const raw = clean.split(markers).map(p => p && p.trim()).filter(Boolean);
   const blocks = [];
 
-  for (let i = 0; i < raw.length; i++) {
-    const textPart = raw[i];
+  for (const textPart of raw) {
     if (textPart.length < 80) continue;
+    if (/^(DISPARADOR(?:ES)?|RESPUESTA OBLIGATORIA|PRIORIDAD ABSOLUTA|NOTA PARA EL MODELO)$/i.test(textPart)) continue;
     const firstLine = textPart.split('\n').find(Boolean) || '';
     blocks.push({
       id: `gpt-master-${blocks.length + 1}`,
@@ -86,12 +86,78 @@ function getBlocks() {
   return cachedBlocks;
 }
 
+function hasAny(q, words) {
+  return words.some(w => q.includes(normalize(w)));
+}
+
+function detectTopic(query) {
+  const q = normalize(query);
+  const topics = [];
+  const add = (id, phrases) => { if (hasAny(q, phrases)) topics.push(id); };
+
+  add('ver_stru_fe', ['ver_stru_fe', 'ver stru fe', 'ver-stru-fe']);
+  add('reindexa', ['reindexa linea 23', 'reindexa linea 90', 'reindexa linea 91', 'reindexa linea 92', 'reindexa linea 93', 'reindexa']);
+  add('duplicidad', ['duplicidad en la numeracion', 'duplicidad en la numeración']);
+  add('stock', ['stock insuficiente', 'no hay stock', 'no hay stock suficiente', 'sin stock', 'quiero facturar igual', 'me frena por stock']);
+  add('recibo', ['borrar recibo', 'eliminar recibo', 'anular recibo', 'corregir recibo', 'recibo mal hecho']);
+  add('factura_blanco', ['factura sale en blanco', 'factura se imprime en blanco', 'factura sin articulos', 'factura sin artículos', 'imprime solo totales', 'factura vacia']);
+  add('factura_sin_membrete', ['factura sin membrete', 'sin datos de la empresa', 'sin encabezado', 'no aparece el qr', 'sin qr', 'sin cae']);
+  add('impresion', ['factura sale cortada', 'imprime chiquito', 'sale como ticket', 'no sale en a4', 'impresora equivocada', 'sale en la comandera']);
+  add('memoria', ['archivo de memoria', 'param.mem', 'config.mem', 'rece.mem', 'no existe la variable hk1', '.mem']);
+  add('pdf', ['pdf creator', 'no genera pdf', 'microsoft print to pdf', 'no responde pdf creator']);
+  add('wsafipfe', ['wsafipfe', 'wafipfe', 'dll factura electronica', 'dll factura electrónica', 'no se puede iniciar la aplicacion wsafipfe']);
+  add('afip_ticket', ['fallo al intentar obtener el ticket', 'falló al intentar obtener el ticket', 'error en token', 'wsaa.afip.gov.ar', 'no se puede resolver el nombre remoto']);
+  add('error_10242', ['10242']);
+  add('error_10243', ['10243']);
+  add('recursos', ['archivo de recursos no es valido', 'archivo de recursos no es válido', 'sobreescribirlo con uno vacio']);
+  add('tabla_dbf', ['no es una tabla', 'dbf']);
+  add('dolares', ['facturar en dolares', 'facturar en dólares', 'tipo de cambio', 'cancela en dolares', 'cancela en dólares']);
+  add('cheque', ['cheque rechazado']);
+  add('retenciones', ['retenciones', 'percepciones', 'impuestos internos']);
+  add('yahoo', ['yahoo', 'smtp.mail.yahoo.com']);
+  add('gmail', ['gmail', 'smtp.gmail.com']);
+  add('tmusb64', ['tmusb64', 'integridad de memoria', 'aislamiento del nucleo']);
+
+  return topics;
+}
+
+const topicMustInclude = {
+  ver_stru_fe: ['ver_stru_fe', 'ver stru fe', 'linea 136'],
+  reindexa: ['reindexa'],
+  duplicidad: ['duplicidad en la numeracion', 'duplicidad en la numeración'],
+  stock: ['stock insuficiente', 'no hay stock', 'permitir facturar aunque no haya stock', 'permitir remitir aunque no haya stock'],
+  recibo: ['recibo'],
+  factura_blanco: ['factura sale en blanco', 'factura se imprime en blanco', 'factura sin articulos', 'factura sin artículos', 'imprime solo totales'],
+  factura_sin_membrete: ['sin membrete', 'no aparece el qr', 'sin qr', 'sin cae', 'punto de venta manual'],
+  impresion: ['factura sale cortada', 'imprime chiquito', 'sale como ticket', 'no sale en a4', 'ticket-factura', 'comandera'],
+  memoria: ['archivo de memoria', 'param.mem', 'config.mem', 'rece.mem', 'no existe la variable hk1'],
+  pdf: ['pdf creator', 'microsoft print to pdf'],
+  wsafipfe: ['wsafipfe', 'wafipfe'],
+  afip_ticket: ['fallo al intentar obtener el ticket', 'error en token', 'wsaa.afip.gov.ar', 'no se puede resolver el nombre remoto'],
+  error_10242: ['10242'],
+  error_10243: ['10243'],
+  recursos: ['archivo de recursos'],
+  tabla_dbf: ['no es una tabla'],
+  dolares: ['facturar en dolares', 'facturar en dólares', 'tipo de cambio', 'cancela en dolares', 'cancela en dólares'],
+  cheque: ['cheque rechazado'],
+  retenciones: ['retenciones', 'percepciones', 'impuestos internos'],
+  yahoo: ['yahoo'],
+  gmail: ['gmail'],
+  tmusb64: ['tmusb64', 'integridad de memoria']
+};
+
+function blockMatchesTopics(block, topics) {
+  if (!topics.length) return true;
+  const hay = normalize(`${block.title}\n${block.text}`);
+  return topics.some(topic => (topicMustInclude[topic] || []).some(p => hay.includes(normalize(p))));
+}
+
 function extractDisparadores(blockText) {
   const out = [];
-  const re = /(DISPARADOR(?:ES)?|Consulta \/ Mensaje típico|Consulta|Mensaje típico)\s*:?([\s\S]{0,900})/ig;
+  const re = /(DISPARADOR(?:ES)?|Consulta \/ Mensaje típico|Consulta|Mensaje típico)\s*:?([\s\S]{0,1200})/ig;
   let match;
   while ((match = re.exec(blockText)) !== null) {
-    const section = match[2].split(/\n\s*\n|RESPUESTA|Qué significa|Que significa|Causa|Solución|Procedimiento|Tema:/i)[0];
+    const section = match[2].split(/\n\s*\n|RESPUESTA|Qué significa|Que significa|Causa|Solución|Procedimiento|Tema:|NOTA PARA EL MODELO/i)[0];
     section.split(/\n|;|,/).forEach(line => {
       const cleaned = line.replace(/^[-*•\s"“”]+|["“”]+$/g, '').trim();
       if (cleaned.length >= 4 && cleaned.length <= 160) out.push(cleaned);
@@ -100,35 +166,17 @@ function extractDisparadores(blockText) {
   return out;
 }
 
-const strongPhrases = [
-  'ver_stru_fe','ver stru fe','reindexa linea 23','reindexa linea 90','reindexa linea 91','reindexa linea 92','reindexa linea 93','linea 136',
-  'duplicidad en la numeracion','duplicidad en la numeración','proximo numero sera','próximo número será',
-  'no hay stock suficiente','stock insuficiente','permitir facturar aunque no haya stock','permitir remitir aunque no haya stock',
-  'factura sale en blanco','factura se imprime en blanco','factura sin articulos','factura sin artículos','imprime solo totales',
-  'factura sin membrete','sin datos de la empresa','no aparece el qr','sin cae',
-  'factura sale cortada','imprime chiquito','sale como ticket','no sale en a4','impresora equivocada','comandera',
-  'archivo de recursos no es valido','archivo de recursos no es válido','sobreescribirlo con uno vacio',
-  'certificado expirado','certificate expired','archivo de memoria','param.mem','config.mem','rece.mem','no existe la variable hk1',
-  'fallo al intentar obtener el ticket','falló al intentar obtener el ticket','error en token','wsaa.afip.gov.ar','no se puede resolver el nombre remoto',
-  'error inesperado de recepcion','error inesperado de recepción','se ha terminado la conexion','se ha terminado la conexión',
-  '10242','10243','condicion iva receptor','condición iva receptor',
-  'pdf creator','microsoft print to pdf','no genera pdf','no responde pdf creator',
-  'gmail','smtp.gmail.com','yahoo','smtp.mail.yahoo.com',
-  'wsafipfe','wafipfe','dll factura electronica','dll factura electrónica','no se puede iniciar la aplicacion wsafipfe',
-  'no es una tabla','no se puede borrar el objeto que esta en uso','no se puede actualizar el objeto cursor','error interno de coherencia','cannot locate the microsoft visual foxpro support library',
-  'borrar recibo','eliminar recibo','anular recibo','recibo mal hecho',
-  'nota de credito','nota de crédito','cheque rechazado','retenciones','percepciones','impuestos internos',
-  'facturar en dolares','facturar en dólares','tipo de cambio','cancela en dolares','cancela en dólares',
-  'reportes 8010','formulario 8010','formulario 8011','impresora fiscal','tmusb64','integridad de memoria'
-];
+const strongPhrases = Object.values(topicMustInclude).flat();
 
 function scoreBlock(query, block) {
   const q = normalize(query);
   const hay = normalize(`${block.title}\n${block.text}`);
   const qt = tokens(query);
+  const topics = detectTopic(query);
   let score = 0;
 
   if (!q) return 0;
+  if (!blockMatchesTopics(block, topics)) return 0;
   if (hay.includes(q)) score += 200;
 
   for (const phrase of strongPhrases) {
@@ -151,10 +199,25 @@ function scoreBlock(query, block) {
   }
 
   if (/prioridad absoluta|respuesta obligatoria|intercepci[oó]n prioritaria|prohibido para el modelo|nota para el modelo/i.test(block.text)) score += 35;
-  if (qt.length >= 2 && tokenHits === 0) score = 0;
+  if (topics.length) score += 80;
+  if (qt.length >= 2 && tokenHits === 0 && score < 250) score = 0;
   if (qt.length >= 3 && tokenHits < 2 && score < 250) score = 0;
 
   return score;
+}
+
+function stripInternalLines(text) {
+  return String(text || '')
+    .split('\n')
+    .filter(line => {
+      const n = normalize(line);
+      if (!n.trim()) return true;
+      if (/^(disparador|disparadores|nota para el modelo|notas para el modelo|prioridad absoluta|intercepcion prioritaria|intercepción prioritaria|respuesta obligatoria|prohibido para el modelo|reglas del modelo|regla final para el modelo|consulta \/ mensaje tipico|consulta \/ mensaje típico)\b/i.test(line.trim())) return false;
+      if (n.includes('el asistente debe') || n.includes('el asistente no debe')) return false;
+      if (n.includes('prohibido para el modelo')) return false;
+      return true;
+    })
+    .join('\n');
 }
 
 function cleanAnswer(blockText) {
@@ -164,12 +227,13 @@ function cleanAnswer(blockText) {
     /RESPUESTA OBLIGATORIA(?:\s*\([^)]*\))?\s*:?/i,
     /Respuesta al usuario\s*:?/i,
     /Respuesta correcta\s*:?/i,
-    /RESPUESTA\s*:?/i,
+    /Respuesta\s*:?/i,
     /Qué hacer\s*:?/i,
     /Que hacer\s*:?/i,
     /Procedimiento oficial\s*:?/i,
     /Solución \(oficial\)[^:]*\s*:?/i,
-    /Solución\s*:?/i
+    /Solución\s*:?/i,
+    /Causa\s*:?/i
   ];
 
   let start = -1;
@@ -183,24 +247,19 @@ function cleanAnswer(blockText) {
   }
   if (start >= 0) text = text.slice(start + markerLength).trim();
 
-  text = text
+  text = stripInternalLines(text)
     .replace(/^===== GPT_SOURCE_FILE:.*?=====\s*/is, '')
-    .replace(/^##?\s*NOTAS? PARA EL MODELO.*?\n+/i, '')
-    .replace(/^NOTAS? PARA EL MODELO.*?\n+/i, '')
-    .replace(/^PRIORIDAD ABSOLUTA.*?\n+/i, '')
-    .replace(/^TEMA:\s*/i, '')
-    .replace(/^#\s*Tema:\s*/i, '')
-    .replace(/^Tema:\s*/i, '')
-    .replace(/^DISPARADORES?:[\s\S]*?(\n\s*\n|$)/i, '')
-    .replace(/^Consulta \/ Mensaje típico:[\s\S]*?(\n\s*\n|$)/i, '')
-    .replace(/^Consulta:[\s\S]*?(\n\s*\n|$)/i, '')
-    .replace(/\n\s*El asistente (NO|no|debe|DEBE)[\s\S]*$/i, '')
+    .replace(/^##?\s*/gm, '')
+    .replace(/^TEMA:\s*/gim, '')
+    .replace(/^#\s*Tema:\s*/gim, '')
+    .replace(/^Tema:\s*/gim, '')
     .replace(/\n\s*PROHIBIDO PARA EL MODELO:[\s\S]*$/i, '')
     .replace(/\n\s*REGLAS DEL MODELO[\s\S]*$/i, '')
     .replace(/\n\s*REGLA FINAL PARA EL MODELO[\s\S]*$/i, '')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 
+  text = stripInternalLines(text).trim();
   return text;
 }
 
@@ -221,7 +280,7 @@ function findGptMasterAnswer(input) {
 
   const scored = blocks
     .map(block => ({ ...block, score: scoreBlock(input, block) }))
-    .filter(block => block.score >= 70)
+    .filter(block => block.score >= 120)
     .sort((a, b) => b.score - a.score);
 
   if (!scored.length) return null;
@@ -229,6 +288,7 @@ function findGptMasterAnswer(input) {
   const best = scored[0];
   const answer = applyStyle(cleanAnswer(best.text));
   if (!answer || answer.length < 20) return null;
+  if (/disparador|nota para el modelo|respuesta obligatoria|prohibido para el modelo/i.test(answer)) return null;
 
   return {
     id: best.id,
@@ -248,4 +308,4 @@ function getGptMasterStatus() {
   };
 }
 
-module.exports = { findGptMasterAnswer, getGptMasterStatus, normalize };
+module.exports = { findGptMasterAnswer, getGptMasterStatus, normalize, detectTopic };
