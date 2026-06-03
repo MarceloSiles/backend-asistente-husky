@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { findDeterministicErrorCodeRuleAnswer } = require('./deterministicErrorCodeRules');
 
 const KNOWLEDGE_DIR = path.join(__dirname, 'knowledge');
 const RULE_FILES = [
@@ -82,6 +83,9 @@ function cleanAnswer(section) {
 }
 
 function findTextRuleAnswer(query) {
+  const codeRule = findDeterministicErrorCodeRuleAnswer(query);
+  if (codeRule) return { id: codeRule.id, file: 'deterministicErrorCodeRules.js', answer: codeRule.answer };
+
   const sections = loadRuleSections();
   const scored = sections
     .map(section => ({ ...section, score: scoreSection(query, section) }))
