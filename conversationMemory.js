@@ -47,9 +47,7 @@ function isHowToFollowUp(text) {
   ];
 
   if (phrases.some(p => q.includes(normalize(p)))) return true;
-
-  // Usuarios suelen escribir rápido o incompleto: "guiam", "guiam por favor", "nose hacerlo".
-  if (compact.includes('guiam') || compact.includes('guiame') || compact.includes('guias') || compact.includes('guias')) return true;
+  if (compact.includes('guiam') || compact.includes('guiame') || compact.includes('guias')) return true;
   if (compact.includes('nosehacerlo') || compact.includes('nosecomo') || compact.includes('noentiendo')) return true;
   if (compact.includes('pasoapaso') || compact.includes('pasamelospasos') || compact.includes('damelospasos')) return true;
   if (compact.includes('ayudame') || compact.includes('ayuda')) return true;
@@ -146,6 +144,105 @@ function buildContextualQuestion(question, req) {
   return { question: contextualQuestion, session, contextualized, followUpExpansion, expansionPrompt };
 }
 
+function getGuidedFollowUpAnswer(session) {
+  const last = getLastTurn(session);
+  if (!last) return null;
+
+  const combined = normalize(`${last.q}\n${last.effectiveQ}\n${last.answer}`);
+
+  if (
+    combined.includes('datos.zip') &&
+    combined.includes('param.mem') &&
+    combined.includes('config.mem') &&
+    combined.includes('rece.mem')
+  ) {
+    return `Claro 😊 Te guío paso a paso.
+
+La idea es recuperar desde DATOS.ZIP solamente estos archivos:
+- PARAM.MEM
+- CONFIG.MEM
+- RECE.MEM
+
+Paso 1: Cerrá Husky en todas las PCs.
+No debe quedar abierto en ninguna terminal.
+
+Paso 2: Buscá la carpeta del sistema.
+Generalmente es C:\\Husky, pero puede estar en otra ubicación.
+
+Si no sabés dónde está:
+- Buscá el acceso directo de Husky en el Escritorio.
+- Hacé clic derecho sobre el acceso directo.
+- Entrá en Propiedades.
+- Mirá el campo Destino o Iniciar en. Ahí vas a ver la carpeta donde está instalado el sistema.
+
+Paso 3: Entrá a esa carpeta.
+Buscá un archivo llamado DATOS.ZIP.
+
+Paso 4: Abrí DATOS.ZIP con doble clic.
+No extraigas todo el contenido. Solo vamos a recuperar 3 archivos.
+
+Paso 5: Dentro de DATOS.ZIP, buscá estos archivos:
+- PARAM.MEM
+- CONFIG.MEM
+- RECE.MEM
+
+Paso 6: Copiá o extraé únicamente esos 3 archivos dentro de la carpeta del sistema.
+Windows te puede preguntar si querés reemplazar los archivos existentes.
+Respondé que sí.
+
+Paso 7: Cuando termine la copia, abrí Husky nuevamente.
+Probá si el error desapareció.
+
+⚠️ Importante:
+No extraigas todo DATOS.ZIP completo, porque podrías pisar otros datos del sistema. Solo deben recuperarse PARAM.MEM, CONFIG.MEM y RECE.MEM.`;
+  }
+
+  if (combined.includes('clientes.bak') && combined.includes('clientes.tbk')) {
+    return `Claro 😊 Te guío paso a paso.
+
+Este caso está relacionado con el archivo de clientes.
+
+Primero te recomiendo la opción más segura:
+
+Paso 1: Cerrá Husky en todas las PCs.
+Paso 2: Entrá a la carpeta del sistema.
+Paso 3: Buscá los archivos CLIENTES.BAK y CLIENTES.TBK.
+Paso 4: Enviá esos dos archivos al soporte técnico de Husky Software para intentar repararlos.
+
+Si es una urgencia y necesitás probar una recuperación manual:
+
+Paso 1: Verificá que CLIENTES.BAK y CLIENTES.TBK sean recientes, idealmente del día anterior o como máximo de 1 día de antigüedad.
+
+Paso 2: Cerrá Husky en todas las PCs.
+
+Paso 3: Entrá a la carpeta del sistema.
+Generalmente es C:\\Husky, pero puede estar en otra ubicación.
+
+Si no sabés dónde está:
+- Clic derecho sobre el acceso directo de Husky.
+- Propiedades.
+- Mirá Destino o Iniciar en.
+
+Paso 4: Buscá los archivos dañados:
+- CLIENTES.DBF
+- CLIENTES.FPT
+
+Paso 5: Cambiales el nombre para no perderlos:
+- CLIENTES.DBF → CLIENTES_DAÑADO.DBF
+- CLIENTES.FPT → CLIENTES_DAÑADO.FPT
+
+Paso 6: Renombrá los backups:
+- CLIENTES.BAK → CLIENTES.DBF
+- CLIENTES.TBK → CLIENTES.FPT
+
+Paso 7: Abrí Husky y probá nuevamente.
+
+⚠️ Si no estás seguro, no lo hagas solo. En ese caso es mejor enviar los archivos al soporte de Husky.`;
+  }
+
+  return null;
+}
+
 function updateSessionAfterAnswer(session, originalQuestion, effectiveQuestion, answer, source) {
   const detected = detectTopic(effectiveQuestion || originalQuestion);
   const original = String(originalQuestion || '').trim();
@@ -161,7 +258,7 @@ function updateSessionAfterAnswer(session, originalQuestion, effectiveQuestion, 
   session.history.push({
     q: original,
     effectiveQ: effective,
-    answer: String(answer || '').slice(0, 1800),
+    answer: String(answer || '').slice(0, 2200),
     source,
     topics: detected,
     time: new Date().toISOString()
@@ -187,5 +284,6 @@ module.exports = {
   updateSessionAfterAnswer,
   getSessionDebug,
   isShortFollowUp,
-  isHowToFollowUp
+  isHowToFollowUp,
+  getGuidedFollowUpAnswer
 };
