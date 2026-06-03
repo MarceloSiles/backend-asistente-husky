@@ -19,8 +19,8 @@ function isShortFollowUp(text) {
   const q = normalize(text);
   if (!q) return false;
   const words = q.split(' ').filter(Boolean);
-  if (words.length <= 5) return true;
-  if (/^(si|sí|no|ok|dale|correcto|exacto|linea|línea|version|versión|es|usa|tiene|aparece|dice|donde|dónde|cual|cuál|como|cómo)\b/i.test(q)) return true;
+  if (words.length <= 6) return true;
+  if (/^(si|sí|no|ok|dale|correcto|exacto|linea|línea|version|versión|es|usa|tiene|aparece|dice|donde|dónde|cual|cuál|como|cómo|ayuda|ayudame|ayúdame|guiame|guiáme|guia|guía)\b/i.test(q)) return true;
   if (/^(linea|línea)\s*\d+$/i.test(q)) return true;
   if (/^\d+$/.test(q)) return true;
   if (/^(v|version|versión)\s*\d+$/i.test(q)) return true;
@@ -30,24 +30,34 @@ function isShortFollowUp(text) {
 function isHowToFollowUp(text) {
   const q = normalize(text);
   if (!q) return false;
-  return (
-    q.includes('como lo hago') ||
-    q.includes('cómo lo hago') ||
-    q.includes('como hago') ||
-    q.includes('cómo hago') ||
-    q.includes('no entiendo') ||
-    q.includes('explicame') ||
-    q.includes('explícame') ||
-    q.includes('paso a paso') ||
-    q.includes('donde entro') ||
-    q.includes('dónde entro') ||
-    q.includes('que hago ahora') ||
-    q.includes('qué hago ahora') ||
-    q.includes('me guias') ||
-    q.includes('me guiás') ||
-    q.includes('guiame') ||
-    q.includes('guiáme')
-  );
+
+  const compact = q.replace(/\s+/g, '');
+
+  const phrases = [
+    'como lo hago', 'cómo lo hago', 'como hago', 'cómo hago', 'como se hace', 'cómo se hace',
+    'no entiendo', 'no entendi', 'no entendí', 'no se hacerlo', 'no sé hacerlo', 'no se como', 'no sé cómo',
+    'no se donde', 'no sé dónde', 'no se que tocar', 'no sé qué tocar',
+    'explicame', 'explícame', 'explicamelo', 'explícamelo', 'paso a paso', 'pasame los pasos',
+    'dame los pasos', 'decime los pasos', 'decime como', 'decime cómo',
+    'donde entro', 'dónde entro', 'donde esta', 'dónde está', 'a donde voy', 'a dónde voy',
+    'que hago ahora', 'qué hago ahora', 'que tengo que hacer', 'qué tengo que hacer',
+    'que toco', 'qué toco', 'que boton', 'qué botón', 'que archivo', 'qué archivo',
+    'me guias', 'me guiás', 'guiame', 'guiáme', 'guia me', 'guía me',
+    'ayudame', 'ayúdame', 'ayuda', 'me ayudas', 'me ayudás', 'acompañame', 'acompañáme'
+  ];
+
+  if (phrases.some(p => q.includes(normalize(p)))) return true;
+
+  // Usuarios suelen escribir rápido o incompleto: "guiam", "guiam por favor", "nose hacerlo".
+  if (compact.includes('guiam') || compact.includes('guiame') || compact.includes('guias') || compact.includes('guias')) return true;
+  if (compact.includes('nosehacerlo') || compact.includes('nosecomo') || compact.includes('noentiendo')) return true;
+  if (compact.includes('pasoapaso') || compact.includes('pasamelospasos') || compact.includes('damelospasos')) return true;
+  if (compact.includes('ayudame') || compact.includes('ayuda')) return true;
+
+  const words = q.split(' ').filter(Boolean);
+  if (words.length <= 7 && (q.includes('como') || q.includes('cómo') || q.includes('guia') || q.includes('guía') || q.includes('ayuda'))) return true;
+
+  return false;
 }
 
 function cleanup() {
@@ -93,12 +103,13 @@ ${original}
 
 Respondé como continuación, no como una consulta nueva.
 Llevá al usuario de la mano, suponiendo que sabe muy poco de Windows y del sistema.
-Usá formato claro:
-Paso 1
-Paso 2
-Paso 3
-...
+Usá siempre este formato:
 
+Paso 1: ...
+Paso 2: ...
+Paso 3: ...
+
+Hacé pasos cortos, simples y concretos.
 No agregues temas nuevos. No cambies de caso. No menciones fuentes internas ni reglas.`;
 }
 
