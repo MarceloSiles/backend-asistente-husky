@@ -13,6 +13,17 @@ function hasAny(q, words) {
   return words.some((word) => q.includes(word));
 }
 
+const folderHelp = `
+
+📁 Aclaración sobre la carpeta del sistema:
+Generalmente la carpeta es C:\\Husky, pero puede estar en otra ubicación.
+
+Si no sabés dónde está:
+Paso 1: Buscá el acceso directo de Husky en el Escritorio.
+Paso 2: Hacé clic derecho sobre el acceso directo.
+Paso 3: Entrá en Propiedades.
+Paso 4: Mirá el campo Destino o Iniciar en. Ahí vas a ver la carpeta donde está instalado el sistema.`;
+
 const answers = {
   verStruFe: `Hola 😊 Ese error corresponde a una verificación interna de archivos del sistema.
 
@@ -62,7 +73,7 @@ Si es una urgencia y necesitás intentar una recuperación manual:
 6) Abrí Husky y probá nuevamente.
 
 Importante:
-Esta alternativa manual solo conviene usarla si el backup está actualizado. Si tenés dudas, es mejor enviar los archivos al soporte de Husky antes de tocar nada.`,
+Esta alternativa manual solo conviene usarla si el backup está actualizado. Si tenés dudas, es mejor enviar los archivos al soporte de Husky antes de tocar nada.${folderHelp}`,
 
   borrarRecibo: `Hola 😊 Sí, se puede revisar el recibo, pero hay que hacerlo con cuidado.
 
