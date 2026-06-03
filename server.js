@@ -9,6 +9,7 @@ const { findFaqAnswer, faq } = require('./faq');
 const { loadKnowledgeChunks, searchKnowledge, formatKnowledgeContext } = require('./knowledge');
 const { findCriticalRuleAnswer } = require('./criticalRules');
 const { findAdditionalRuleAnswer } = require('./additionalCriticalRules');
+const { findDeterministicRuleAnswer } = require('./deterministicRules');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -48,6 +49,9 @@ function hasOpenAIKey() {
 }
 
 function findRuleAnswer(question) {
+  const deterministic = findDeterministicRuleAnswer(question);
+  if (deterministic) return { ...deterministic, family: 'deterministic-rule' };
+
   const additional = findAdditionalRuleAnswer(question);
   if (additional) return { ...additional, family: 'additional-critical-rule' };
 
