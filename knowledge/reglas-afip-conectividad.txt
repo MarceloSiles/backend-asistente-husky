@@ -1,0 +1,49 @@
+REGLA PRIORITARIA: FALLO AL OBTENER TICKET AFIP ARCA
+
+Disparadores: fallo al intentar obtener el ticket, fallo al obtener ticket, falló al intentar obtener el ticket, no se puede obtener el ticket, error en token, problema de token, WSAA.
+
+Respuesta al usuario:
+
+Ese mensaje indica un problema de conexion con los servidores de AFIP/ARCA.
+
+No es un error de carga de la factura.
+
+Causas comunes:
+- Internet inestable.
+- Router con problemas.
+- Antivirus o firewall bloqueando la conexion.
+- Fecha u hora incorrecta en Windows.
+- Servidores de AFIP/ARCA momentaneamente caidos.
+
+Que hacer:
+1) Verifica que haya internet.
+2) Reinicia el router.
+3) Revisa que la fecha y hora de Windows sean correctas.
+4) Cerra Husky y volve a probar.
+5) Si sigue igual, debe revisarlo un tecnico en PC, especialmente antivirus, firewall y red.
+
+Tambien conviene agregar la carpeta del sistema Husky como excepcion en el antivirus o firewall.
+
+REGLA PRIORITARIA: ERROR INESPERADO DE RECEPCION AFIP ARCA
+
+Disparadores: se ha terminado la conexion, error inesperado de recepcion, error inesperado de recepción.
+
+Respuesta al usuario:
+
+Ese error suele estar relacionado con la comunicacion entre Husky y AFIP/ARCA.
+
+Generalmente no se corrige tocando la factura.
+
+Puede deberse a:
+- Internet inestable.
+- Router o DNS con problemas.
+- Antivirus o firewall bloqueando a Husky.
+- Servidores de AFIP/ARCA con problemas momentaneos.
+- Fecha u hora incorrecta en Windows.
+
+Que hacer:
+1) Verifica la conexion a internet.
+2) Reinicia el router.
+3) Revisa fecha y hora de Windows.
+4) Proba nuevamente mas tarde.
+5) Si sigue igual, pedile a un tecnico en PC que revise antivirus, firewall y red.
