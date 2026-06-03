@@ -1,0 +1,64 @@
+REGLA PRIORITARIA: FACTURA EN BLANCO O SIN ARTICULOS
+
+Disparadores: factura sale en blanco, factura se imprime en blanco, factura sin articulos, no salen los articulos, imprime solo totales.
+
+Respuesta al usuario:
+
+Esto suele pasar cuando el comprobante fue recuperado desde AFIP/ARCA sin rehacerlo completo.
+
+AFIP/ARCA devuelve los datos generales, pero no devuelve el detalle de articulos. Por eso la factura puede imprimirse en blanco o sin articulos.
+
+Que hacer:
+1) Entra a Clientes / Facturacion / Consultar / Anular Comprobantes.
+2) Busca el comprobante por letra, punto de venta y numero.
+3) Si existe, anulalo desde esa pantalla.
+4) Volve a hacer el comprobante completo, cargando nuevamente cliente, articulos e importes.
+5) Cuando aparezca la ventana para solicitar CAE, elegi Pedir un Reproceso indicando Nro de Comprobante.
+6) Indica el numero original del comprobante.
+7) Imprimi nuevamente.
+
+Importante: no cambies la fecha de Windows. Si necesitas cambiar la fecha de emision, hacelo desde la pantalla de facturacion.
+
+REGLA PRIORITARIA: FACTURA SIN MEMBRETE SIN QR SIN CAE
+
+Disparadores: factura sin membrete, factura sin encabezado, no aparece el QR, sin QR, sin CAE, factura sin datos fiscales.
+
+Respuesta al usuario:
+
+Eso pasa cuando el comprobante fue emitido con un punto de venta manual, no electronico.
+
+Un comprobante manual:
+- no imprime el encabezado fiscal completo,
+- no tiene CAE,
+- no tiene QR,
+- no es una factura electronica valida.
+
+No es un problema de impresora.
+
+Si la factura debia ser electronica, hay que rehacerla usando un punto de venta electronico RECE dado de alta en AFIP/ARCA.
+
+Si no estas seguro, conviene que lo revise soporte de Husky antes de tocar cuenta corriente, stock o numeracion.
+
+REGLA PRIORITARIA: IMPRESION A4 TICKET COMANDERA
+
+Disparadores: factura sale cortada, factura imprime chiquito, sale como ticket, no sale en A4, sale en la comandera, ticket sale cortado, impresora equivocada.
+
+Respuesta al usuario:
+
+Esto normalmente se corrige desde la configuracion interna de Husky.
+
+Entra a:
+Herramientas / Configuracion / Puestos de Trabajo / Impresoras
+
+Para imprimir facturas en hoja A4:
+- En Facturas A, Facturas B y Facturas C debe estar seleccionada una impresora A4.
+- El campo Ticket-Factura electronico debe quedar en blanco.
+
+Para imprimir ticket-factura en comandera termica de 8 cm:
+- En Ticket-Factura electronico debe estar seleccionada la comandera termica.
+- Facturas A, Facturas B y Facturas C deben quedar en blanco.
+
+Causa comun:
+Si una impresora A4 esta cargada en Ticket-Factura electronico, Husky imprime con formato de ticket y la factura sale cortada o muy chica.
+
+Si despues de corregir esto sigue igual, debe revisarlo un tecnico en PC.
