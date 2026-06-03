@@ -10,6 +10,7 @@ const RULE_FILES = [
   'reglas-afip-conectividad.txt',
   'reglas-varias-prioritarias.txt',
   'reglas-comerciales-prioritarias.txt',
+  'reglas-correo-windows-impresoras.txt',
   'instrucciones-gpt-prioridad.txt',
   'certificado-expirado-prioritario.txt',
   'estilo-respuestas-usuarios-basicos.txt'
@@ -72,7 +73,9 @@ function scoreSection(query, section) {
     'borrar factura electronica', 'borrar factura electrónica', 'eliminar factura electronica',
     'cargar pedidos', 'pedido de cliente', 'convertir pedido en factura', 'agregar articulo',
     'agregar artículo', 'cargar articulo nuevo', 'cargar artículo nuevo', 'retenciones',
-    'percepciones', 'impuestos internos', 'remito preimpreso', 'cai del remito'
+    'percepciones', 'impuestos internos', 'remito preimpreso', 'cai del remito',
+    'yahoo', 'smtp.mail.yahoo.com', 'tmusb64', 'integridad de memoria', 'aislamiento del nucleo',
+    'aislamiento del núcleo', 'ticket factura', 'ticket-factura', 'comandera', '80 mm', '8 cm'
   ];
 
   for (const phrase of strong) {
